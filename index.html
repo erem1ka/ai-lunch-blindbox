@@ -326,6 +326,35 @@
       background: rgba(255,255,255,.72);
     }
 
+    main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero {
+      display: none;
+    }
+
+    #tool {
+      order: -10;
+      padding-top: 54px;
+      background:
+        radial-gradient(circle at 92% 8%, rgba(255, 190, 61, .2), transparent 24%),
+        radial-gradient(circle at 12% 24%, rgba(63, 143, 90, .12), transparent 28%),
+        rgba(255,255,255,.8);
+    }
+
+    #tool .section-head {
+      max-width: 860px;
+      margin-bottom: 28px;
+    }
+
+    #tool .section-head h1 {
+      margin: 18px 0 14px;
+      font-size: clamp(40px, 5.6vw, 68px);
+      line-height: 1.02;
+    }
+
     .section-head {
       max-width: 760px;
       margin-bottom: 34px;
@@ -1082,8 +1111,8 @@
         <span>午餐盲盒决策助手</span>
       </a>
       <div class="nav-links">
-        <a href="#scenes">适用场景</a>
         <a href="#tool">工具</a>
+        <a href="#scenes">适用场景</a>
         <a href="#why">推荐亮点</a>
         <a href="#portal">说明入口</a>
       </div>
@@ -1097,7 +1126,7 @@
       <section class="hero">
         <div>
           <span class="eyebrow">Decision Tool · Lunch Choice</span>
-          <h1>今天中午，<span>别再纠结吃什么。</span></h1>
+          <h2 class="hero-title">今天中午，<span>别再纠结吃什么。</span></h2>
           <p class="hero-copy">输入预算、时间、口味、忌口和健康偏好，马上得到一个适合今天的午餐推荐。想换也可以，一键再开一份。</p>
           <div class="hero-actions">
             <a class="button-dark" href="#tool">试试盲盒</a>
@@ -1228,7 +1257,7 @@
       <section class="section" id="tool">
         <div class="section-head">
           <span class="eyebrow">Lunch Picker</span>
-          <h2>选几个条件，午餐自动开盲盒</h2>
+          <h1>选几个条件，午餐自动开盲盒</h1>
           <p>不用登录，不读取定位。选完条件后，右侧会实时给出今天的午餐建议。</p>
         </div>
         <div class="tool-stage">
