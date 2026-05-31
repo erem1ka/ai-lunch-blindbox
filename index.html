@@ -442,9 +442,18 @@
       align-items: start;
     }
 
+    .tool-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 252px;
+      gap: 18px;
+      align-items: start;
+    }
+
     .decision-panel,
     .recommend-panel,
-    .rule-panel {
+    .rule-panel,
+    .portal-panel,
+    .info-page {
       border: 1px solid var(--line);
       border-radius: 20px;
       background: rgba(255,255,255,.92);
@@ -567,7 +576,7 @@
       transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease);
     }
 
-    .recommend-actions button:first-child,
+    .recommend-actions #shuffleButton,
     .feedback-actions button.primary {
       background: var(--tomato);
       color: #fff;
@@ -760,6 +769,105 @@
 
     .memory-bar p { margin: 0; }
 
+    .portal-panel {
+      position: sticky;
+      top: 18px;
+      overflow: hidden;
+      padding: 20px;
+      background:
+        linear-gradient(135deg, rgba(255, 247, 220, .9), rgba(237, 248, 239, .82)),
+        #fff;
+    }
+
+    .portal-panel::before {
+      content: "";
+      position: absolute;
+      inset: 14px auto 14px 0;
+      width: 4px;
+      border-radius: 0 999px 999px 0;
+      background: linear-gradient(180deg, var(--tomato), var(--yolk), var(--leaf));
+    }
+
+    .portal-label {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(236, 228, 216, .9);
+      padding: 0 10px;
+      color: #776139;
+      font-size: 11px;
+      font-weight: 860;
+      text-transform: uppercase;
+    }
+
+    .portal-panel h3 {
+      margin: 16px 0 8px;
+      font-size: 22px;
+      line-height: 1.18;
+    }
+
+    .portal-panel p {
+      margin: 0 0 16px;
+      color: #65706d;
+      font-size: 13px;
+      line-height: 1.62;
+    }
+
+    .portal-links {
+      display: grid;
+      gap: 10px;
+    }
+
+    .portal-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      border: 1px solid rgba(236, 228, 216, .92);
+      border-radius: 16px;
+      background: rgba(255,255,255,.76);
+      padding: 10px 12px;
+      color: #333a42;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease), background 180ms var(--ease);
+    }
+
+    .portal-card:hover {
+      transform: translateX(3px);
+      border-color: rgba(233, 75, 53, .26);
+      background: #fff;
+      box-shadow: var(--micro-shadow);
+    }
+
+    .portal-card b {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--tomato-soft);
+      color: var(--tomato);
+      font-size: 12px;
+    }
+
+    .portal-card span {
+      font-size: 13px;
+      font-weight: 820;
+    }
+
+    .portal-card small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .portal-card i {
+      font-style: normal;
+      color: var(--tomato);
+      font-weight: 900;
+    }
+
     .risk-note {
       border-left: 3px solid var(--tomato);
       padding-left: 13px;
@@ -781,6 +889,101 @@
     .rule-panel { padding: 24px; margin-top: 18px; }
     .rule-panel h3 { margin: 0 0 10px; font-size: 22px; }
     .rule-panel p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    .info-section {
+      padding-top: 56px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.76), rgba(255,250,241,.86));
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .info-page {
+      scroll-margin-top: 26px;
+      position: relative;
+      min-height: 280px;
+      padding: 26px;
+      overflow: hidden;
+      transition: transform 220ms var(--ease), border-color 220ms var(--ease), box-shadow 220ms var(--ease), background 220ms var(--ease);
+    }
+
+    .info-page::after {
+      content: attr(data-index);
+      position: absolute;
+      right: 20px;
+      bottom: 12px;
+      color: rgba(233, 75, 53, .08);
+      font-size: 82px;
+      font-weight: 920;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .info-page:target {
+      transform: translateY(-4px);
+      border-color: rgba(233, 75, 53, .34);
+      background:
+        linear-gradient(135deg, rgba(255, 241, 237, .92), rgba(255,255,255,.96));
+      box-shadow: 0 24px 58px rgba(71, 48, 24, .12);
+    }
+
+    .info-page h3 {
+      margin: 14px 0 10px;
+      font-size: 25px;
+      line-height: 1.18;
+    }
+
+    .info-page p {
+      font-size: 14px;
+      color: #606a72;
+      line-height: 1.72;
+    }
+
+    .info-page ul {
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .info-page li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      color: #4f5962;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .info-page li::before {
+      content: "";
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      border-radius: 7px;
+      background: var(--leaf-soft);
+      box-shadow: inset 0 0 0 6px #fff;
+    }
+
+    .back-link {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      padding: 0 13px;
+      font-size: 12px;
+      font-weight: 820;
+      margin-top: 20px;
+    }
 
     .metrics-layout {
       display: grid;
@@ -826,6 +1029,7 @@
       .hero,
       .hero-tool,
       .research-layout,
+      .tool-stage,
       .tool-layout {
         grid-template-columns: 1fr;
       }
@@ -833,6 +1037,7 @@
       .hero-controls { border-right: 0; border-bottom: 1px solid var(--line); }
       .card-grid, .iteration-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .metrics-layout { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .portal-panel { position: relative; top: 0; }
     }
 
     @media (max-width: 760px) {
@@ -850,6 +1055,7 @@
       .option-grid,
       .reason-grid,
       .alt-grid,
+      .info-grid,
       .metrics-layout,
       .iteration-grid { grid-template-columns: 1fr; }
       .meal-header, .panel-top, .recommend-top, .memory-bar { flex-direction: column; align-items: flex-start; }
@@ -879,7 +1085,7 @@
         <a href="#scenes">适用场景</a>
         <a href="#tool">工具</a>
         <a href="#why">推荐亮点</a>
-        <a href="#faq">常见问题</a>
+        <a href="#portal">说明入口</a>
       </div>
       <div class="nav-actions">
         <a class="button-light" href="#scenes">看看适不适合你</a>
@@ -1025,150 +1231,192 @@
           <h2>选几个条件，午餐自动开盲盒</h2>
           <p>不用登录，不读取定位。选完条件后，右侧会实时给出今天的午餐建议。</p>
         </div>
-        <div class="tool-layout">
-          <form class="decision-panel" id="lunchForm">
-            <div class="panel-top">
-              <div>
-                <h3>今日午餐条件</h3>
-                <span>调整后实时更新推荐</span>
+        <div class="tool-stage">
+          <div class="tool-layout">
+            <form class="decision-panel" id="lunchForm">
+              <div class="panel-top">
+                <div>
+                  <h3>今日午餐条件</h3>
+                  <span>调整后实时更新推荐</span>
+                </div>
+                <span class="status">Ready</span>
               </div>
-              <span class="status">Ready</span>
-            </div>
 
-            <div class="form-group" data-group="budget">
-              <div class="group-label">预算 <span>硬约束</span></div>
-              <div class="option-grid">
-                <button class="option" type="button" data-value="low">20 元内</button>
-                <button class="option active" type="button" data-value="mid">30 元内</button>
-                <button class="option" type="button" data-value="high">45 元内</button>
-                <button class="option" type="button" data-value="flex">今天放开</button>
+              <div class="form-group" data-group="budget">
+                <div class="group-label">预算 <span>硬约束</span></div>
+                <div class="option-grid">
+                  <button class="option" type="button" data-value="low">20 元内</button>
+                  <button class="option active" type="button" data-value="mid">30 元内</button>
+                  <button class="option" type="button" data-value="high">45 元内</button>
+                  <button class="option" type="button" data-value="flex">今天放开</button>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group" data-group="time">
-              <div class="group-label">时间 <span>出餐速度</span></div>
-              <div class="option-grid">
-                <button class="option" type="button" data-value="rush">15 分钟</button>
-                <button class="option active" type="button" data-value="normal">30 分钟</button>
-                <button class="option" type="button" data-value="slow">慢慢吃</button>
-                <button class="option" type="button" data-value="delivery">等外卖</button>
+              <div class="form-group" data-group="time">
+                <div class="group-label">时间 <span>出餐速度</span></div>
+                <div class="option-grid">
+                  <button class="option" type="button" data-value="rush">15 分钟</button>
+                  <button class="option active" type="button" data-value="normal">30 分钟</button>
+                  <button class="option" type="button" data-value="slow">慢慢吃</button>
+                  <button class="option" type="button" data-value="delivery">等外卖</button>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group" data-group="taste">
-              <div class="group-label">口味 <span>主偏好</span></div>
-              <div class="option-grid">
-                <button class="option active" type="button" data-value="hot">热乎</button>
-                <button class="option" type="button" data-value="spicy">想吃辣</button>
-                <button class="option" type="button" data-value="fresh">清爽</button>
-                <button class="option" type="button" data-value="comfort">安慰餐</button>
+              <div class="form-group" data-group="taste">
+                <div class="group-label">口味 <span>主偏好</span></div>
+                <div class="option-grid">
+                  <button class="option active" type="button" data-value="hot">热乎</button>
+                  <button class="option" type="button" data-value="spicy">想吃辣</button>
+                  <button class="option" type="button" data-value="fresh">清爽</button>
+                  <button class="option" type="button" data-value="comfort">安慰餐</button>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group" data-group="mode">
-              <div class="group-label">就餐方式 <span>场景</span></div>
-              <div class="option-grid">
-                <button class="option active" type="button" data-value="nearby">附近堂食</button>
-                <button class="option" type="button" data-value="takeaway">外卖</button>
-                <button class="option" type="button" data-value="desk">工位解决</button>
-                <button class="option" type="button" data-value="team">和同事吃</button>
+              <div class="form-group" data-group="mode">
+                <div class="group-label">就餐方式 <span>场景</span></div>
+                <div class="option-grid">
+                  <button class="option active" type="button" data-value="nearby">附近堂食</button>
+                  <button class="option" type="button" data-value="takeaway">外卖</button>
+                  <button class="option" type="button" data-value="desk">工位解决</button>
+                  <button class="option" type="button" data-value="team">和同事吃</button>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group" data-group="health">
-              <div class="group-label">健康偏好 <span>软约束</span></div>
-              <div class="option-grid">
-                <button class="option active" type="button" data-value="balanced">均衡一点</button>
-                <button class="option" type="button" data-value="light">少油轻负担</button>
-                <button class="option" type="button" data-value="protein">补蛋白</button>
-                <button class="option" type="button" data-value="happy">开心最重要</button>
+              <div class="form-group" data-group="health">
+                <div class="group-label">健康偏好 <span>软约束</span></div>
+                <div class="option-grid">
+                  <button class="option active" type="button" data-value="balanced">均衡一点</button>
+                  <button class="option" type="button" data-value="light">少油轻负担</button>
+                  <button class="option" type="button" data-value="protein">补蛋白</button>
+                  <button class="option" type="button" data-value="happy">开心最重要</button>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group">
-              <div class="group-label">忌口 <span>可多选</span></div>
-              <div class="option-grid avoid-grid" id="avoidGrid">
-                <button class="option" type="button" data-avoid="spicy">不吃辣</button>
-                <button class="option" type="button" data-avoid="beef">不吃牛肉</button>
-                <button class="option" type="button" data-avoid="seafood">不吃海鲜</button>
-                <button class="option" type="button" data-avoid="meat">素食优先</button>
+              <div class="form-group">
+                <div class="group-label">忌口 <span>可多选</span></div>
+                <div class="option-grid avoid-grid" id="avoidGrid">
+                  <button class="option" type="button" data-avoid="spicy">不吃辣</button>
+                  <button class="option" type="button" data-avoid="beef">不吃牛肉</button>
+                  <button class="option" type="button" data-avoid="seafood">不吃海鲜</button>
+                  <button class="option" type="button" data-avoid="meat">素食优先</button>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
 
-          <section class="recommend-panel" aria-live="polite">
-            <div class="recommend-top">
-              <strong>今日推荐</strong>
-              <div class="recommend-actions">
-                <label class="no-repeat-toggle">
-                  <input type="checkbox" id="noRepeatToggle" checked>
-                  本周不重复
-                </label>
-                <button type="button" id="shuffleButton">换一换</button>
-                <button class="secondary" type="button" id="resetMemoryButton">清空偏好</button>
+            <section class="recommend-panel" aria-live="polite">
+              <div class="recommend-top">
+                <strong>今日推荐</strong>
+                <div class="recommend-actions">
+                  <label class="no-repeat-toggle">
+                    <input type="checkbox" id="noRepeatToggle" checked>
+                    本周不重复
+                  </label>
+                  <button type="button" id="shuffleButton">换一换</button>
+                  <button class="secondary" type="button" id="resetMemoryButton">清空偏好</button>
+                </div>
               </div>
+              <div class="recommend-body">
+                <div class="empty-state" id="emptyState">
+                  暂时没有完全匹配的午餐。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
+                </div>
+                <article class="main-meal" id="mainMeal"></article>
+                <div class="feedback-actions" id="feedbackActions">
+                  <button class="primary" type="button" data-feedback="accept">就吃这个</button>
+                  <button type="button" data-feedback="skip">今天不想吃</button>
+                  <button type="button" data-feedback="ban">本周别再推荐</button>
+                </div>
+                <div class="memory-bar" id="memoryBar"></div>
+                <div class="reason-grid" id="reasonGrid"></div>
+                <div class="alt-grid" id="altGrid"></div>
+                <div class="blocked-card" id="blockedCard"></div>
+                <div class="risk-note" id="riskNote"></div>
+              </div>
+            </section>
+          </div>
+
+          <aside class="portal-panel" id="portal" aria-label="午餐信息传送门">
+            <span class="portal-label">Info Portal</span>
+            <h3>需要多看一眼？</h3>
+            <p>说明内容不挤在主界面里。想了解怎么用、推荐怎么理解、偏好怎么保存时，从这里跳过去。</p>
+            <div class="portal-links">
+              <a class="portal-card" href="#guide">
+                <b>01</b>
+                <span>怎么用 <small>30 秒上手</small></span>
+                <i>→</i>
+              </a>
+              <a class="portal-card" href="#recommend-info">
+                <b>02</b>
+                <span>怎么看推荐 <small>首推、备选、不推荐</small></span>
+                <i>→</i>
+              </a>
+              <a class="portal-card" href="#privacy-info">
+                <b>03</b>
+                <span>偏好和隐私 <small>只在本机保存</small></span>
+                <i>→</i>
+              </a>
+              <a class="portal-card" href="#more-info">
+                <b>04</b>
+                <span>以后可以加什么 <small>真实商家、自然语言</small></span>
+                <i>→</i>
+              </a>
             </div>
-            <div class="recommend-body">
-              <div class="empty-state" id="emptyState">
-                暂时没有完全匹配的午餐。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
-              </div>
-              <article class="main-meal" id="mainMeal"></article>
-              <div class="feedback-actions" id="feedbackActions">
-                <button class="primary" type="button" data-feedback="accept">就吃这个</button>
-                <button type="button" data-feedback="skip">今天不想吃</button>
-                <button type="button" data-feedback="ban">本周别再推荐</button>
-              </div>
-              <div class="memory-bar" id="memoryBar"></div>
-              <div class="reason-grid" id="reasonGrid"></div>
-              <div class="alt-grid" id="altGrid"></div>
-              <div class="blocked-card" id="blockedCard"></div>
-              <div class="risk-note" id="riskNote"></div>
-            </div>
-          </section>
+          </aside>
         </div>
-
-        <aside class="rule-panel">
-          <h3>使用小提示</h3>
-          <p>如果推荐不合胃口，先点“换一换”；如果一直不满意，再调整预算、口味或忌口，结果会马上更新。</p>
-          <ul>
-            <li>赶时间时，优先选择 15 分钟内能解决的午餐。</li>
-            <li>想清爽一点时，可以把健康偏好切到“少油轻负担”。</li>
-            <li>多人一起吃饭时，可以先避开大家明确不吃的东西。</li>
-          </ul>
-        </aside>
       </section>
 
-      <section class="section" id="faq">
+      <section class="section info-section" id="info-pages">
         <div class="section-head center">
-          <span class="eyebrow">FAQ</span>
-          <h2>常见问题</h2>
-          <p>先把今天吃什么定下来。更多复杂能力，可以等你真的需要时再打开。</p>
+          <span class="eyebrow">Info Pages</span>
+          <h2>说明放在这里，主界面保持轻</h2>
+          <p>这些页面只在你需要时查看，不打断“选条件 → 看推荐 → 决定午餐”的主路径。</p>
         </div>
-        <div class="metrics-layout">
-          <article class="metric-card">
-            <small>会读取定位吗</small>
-            <strong>不会</strong>
-            <p>当前只根据你手动选择的条件推荐，不访问定位和账号信息。</p>
+        <div class="info-grid">
+          <article class="info-page" id="guide" data-index="01">
+            <span class="eyebrow">Guide</span>
+            <h3>怎么用</h3>
+            <p>先选预算、时间、口味、就餐方式和健康偏好。如果有明确忌口，再勾选不吃辣、不吃牛肉、不吃海鲜或素食优先。</p>
+            <ul>
+              <li>不想动脑时，直接看“今日推荐”。</li>
+              <li>想换口味时，点“换一换”或点击备选卡片。</li>
+              <li>吃过之后点“就吃这个”，本周后续推荐会避开重复。</li>
+            </ul>
+            <a class="back-link" href="#tool">回到工具</a>
           </article>
-          <article class="metric-card">
-            <small>推荐够多吗</small>
-            <strong>48</strong>
-            <p>内置多类午餐选项，会按你的条件挑出首推和备选。</p>
+
+          <article class="info-page" id="recommend-info" data-index="02">
+            <span class="eyebrow">Recommendation</span>
+            <h3>怎么看推荐</h3>
+            <p>页面会给你一份首推、两份备选，以及一份暂时不推荐的午餐。这样不是只给答案，也顺手告诉你为什么不是别的。</p>
+            <ul>
+              <li>首推：最贴近当前条件的午餐。</li>
+              <li>备选：同样条件下仍然合适的替代方案。</li>
+              <li>暂不推荐：因为预算、忌口或口味不合适，先放到后面。</li>
+            </ul>
+            <a class="back-link" href="#tool">回到工具</a>
           </article>
-          <article class="metric-card">
-            <small>能处理忌口吗</small>
-            <strong>可以</strong>
-            <p>选择忌口后，会避开明显冲突的午餐类型。</p>
+
+          <article class="info-page" id="privacy-info" data-index="03">
+            <span class="eyebrow">Privacy</span>
+            <h3>偏好和隐私</h3>
+            <p>这个页面不会读取定位，也不会把你的选择传到服务器。偏好只保存在当前浏览器里，用来记住本周吃过和暂时不想吃的选项。</p>
+            <ul>
+              <li>“就吃这个”会记录为本周已采纳。</li>
+              <li>“本周别再推荐”会暂时降低出现频率。</li>
+              <li>“清空偏好”可以一键恢复到初始状态。</li>
+            </ul>
+            <a class="back-link" href="#tool">回到工具</a>
           </article>
-          <article class="metric-card">
-            <small>不想吃怎么办</small>
-            <strong>换一换</strong>
-            <p>同样条件下可以继续换推荐，不用重新填一遍。</p>
-          </article>
-          <article class="metric-card">
-            <small>没有结果怎么办</small>
-            <strong>放宽</strong>
-            <p>可以提高预算、取消部分忌口，或把就餐方式改成外卖。</p>
+
+          <article class="info-page" id="more-info" data-index="04">
+            <span class="eyebrow">More</span>
+            <h3>以后可以加什么</h3>
+            <p>现在先用内置午餐池完成选择。等你需要更真实的版本，可以继续加入附近商家、同事投票和自然语言输入。</p>
+            <ul>
+              <li>附近商家：把午餐类型变成可下单门店。</li>
+              <li>同事投票：多人一起吃饭时自动合并忌口和预算。</li>
+              <li>自然语言：直接输入“今天有点累，想吃热的，别太贵”。</li>
+            </ul>
+            <a class="back-link" href="#tool">回到工具</a>
           </article>
         </div>
       </section>
