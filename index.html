@@ -1231,7 +1231,7 @@
           <article class="insight-card">
             <div class="icon">03</div>
             <h3>口味摇摆</h3>
-            <p>想吃热乎、清爽、重口或安慰餐，都能按当天状态切换。</p>
+            <p>想吃热乎、清爽、重口或满足一点，都能按当天状态切换。</p>
           </article>
           <article class="insight-card">
             <div class="icon">04</div>
@@ -1341,22 +1341,12 @@
                   <button class="option active" type="button" data-value="hot">热乎</button>
                   <button class="option" type="button" data-value="spicy">想吃辣</button>
                   <button class="option" type="button" data-value="fresh">清爽</button>
-                  <button class="option" type="button" data-value="comfort">安慰餐</button>
+                  <button class="option" type="button" data-value="comfort">满足一点</button>
                 </div>
               </div>
 
               <details class="advanced-controls">
-                <summary>更多条件：场景、健康、忌口</summary>
-
-              <div class="form-group" data-group="mode">
-                <div class="group-label">就餐方式 <span>场景</span></div>
-                <div class="option-grid">
-                  <button class="option active" type="button" data-value="nearby">附近堂食</button>
-                  <button class="option" type="button" data-value="takeaway">外卖</button>
-                  <button class="option" type="button" data-value="desk">工位解决</button>
-                  <button class="option" type="button" data-value="team">和同事吃</button>
-                </div>
-              </div>
+                <summary>更多条件：健康、忌口</summary>
 
               <div class="form-group" data-group="health">
                 <div class="group-label">健康偏好 <span>软约束</span></div>
@@ -1394,7 +1384,7 @@
               </div>
               <div class="recommend-body">
                 <div class="empty-state" id="emptyState">
-                  暂时没有完全匹配的选择。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
+                  暂时没有完全匹配的选择。可以放宽预算、增加等待时间，或者取消部分忌口。
                 </div>
                 <article class="main-meal" id="mainMeal"></article>
                 <div class="feedback-actions" id="feedbackActions">
@@ -1451,7 +1441,7 @@
           <article class="info-page" id="guide" data-index="01">
             <span class="eyebrow">Guide</span>
             <h3>怎么用</h3>
-            <p>先选预算、时间、口味、就餐方式和健康偏好。如果有明确忌口，再勾选不吃辣、不吃牛肉、不吃海鲜或素食优先。</p>
+            <p>先选预算、时间、口味和健康偏好。如果有明确忌口，再勾选不吃辣、不吃牛肉、不吃海鲜或素食优先。</p>
             <ul>
               <li>不想动脑时，直接看“今日推荐”。</li>
               <li>想换口味时，点“换一换”或点击备选卡片。</li>
@@ -1501,7 +1491,6 @@
 
     <footer>
       <span>吃什么盲盒决策助手 · 今天吃点什么</span>
-      <span>Meal Decision · 2026</span>
     </footer>
   </div>
 
@@ -1518,12 +1507,12 @@
     const labels = {
       budget: { low: "20 元内", mid: "30 元内", high: "45 元内", flex: "今天放开" },
       time: { rush: "15 分钟", normal: "30 分钟", slow: "慢慢吃", delivery: "等外卖" },
-      taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "安慰餐" },
+      taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "满足一点" },
       mode: { nearby: "附近堂食", takeaway: "外卖", desk: "工位解决", team: "和同事吃" },
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
       tag: {
         hot: "热乎",
-        comfort: "安慰餐",
+        comfort: "满足一点",
         nearby: "附近堂食",
         protein: "蛋白够",
         spicy: "想吃辣",
@@ -1542,7 +1531,7 @@
     const meals = [
       meal("番茄牛肉粉", "🍜", 28, 18, ["hot", "comfort", "nearby", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0, "热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。", "适合想吃热乎、午休时间一般、下午还要继续工作的日子。", "不吃牛肉或想少汤水时不适合。"),
       meal("麻辣烫轻菜版", "🥘", 25, 24, ["spicy", "hot", "nearby", "team"], ["spicy"], ["balanced", "happy"], 4, 3, 3, "口味满足感强，配菜自由度高，可以通过少放丸子和少油来控制负担。", "适合想吃辣、又希望自己控制菜量和主食的人。", "不吃辣、赶时间或下午要开长会时不建议。"),
-      meal("鸡胸轻食碗", "🥗", 32, 20, ["fresh", "takeaway", "desk", "protein"], [], ["light", "protein", "balanced"], 3, 1, 0, "蛋白质稳定，油脂较低，适合想减少午后困意的工作日。", "适合轻负担、工位解决、下午需要保持清醒的场景。", "预算 20 元内或今天想吃安慰餐时满足感可能不足。"),
+      meal("鸡胸轻食碗", "🥗", 32, 20, ["fresh", "takeaway", "desk", "protein"], [], ["light", "protein", "balanced"], 3, 1, 0, "蛋白质稳定，油脂较低，适合想减少午后困意的工作日。", "适合轻负担、工位解决、下午需要保持清醒的状态。", "预算 20 元内或今天想吃满足一点时可能不够。"),
       meal("照烧鸡腿饭", "🍱", 29, 16, ["hot", "comfort", "nearby", "takeaway", "protein"], [], ["balanced", "protein", "happy"], 5, 3, 0, "主食、肉和配菜都有，出餐稳定，适合不想冒险的用餐选择。", "适合预算 30 元内、想快速吃饱、对口味没有强刺激想法的人。", "酱汁偏甜，少油偏好强时可以换轻食或便利店组合。"),
       meal("便利店饭团酸奶组合", "🍙", 19, 6, ["fresh", "desk", "rush"], [], ["light", "balanced"], 2, 1, 0, "最快、最稳、预算低，适合会议前后没有完整午休的情况。", "适合 15 分钟内解决、预算敏感、只想不饿的日子。", "饱腹感有限，下午容易饿时建议加鸡蛋或水果。"),
       meal("港式茶餐厅双拼饭", "🍛", 42, 32, ["comfort", "team", "nearby", "hot"], [], ["happy"], 5, 4, 0, "菜品接受度高，适合和同事一起吃，今天不想继续纠结时很稳。", "适合不赶时间、需要大家都能接受、想吃满足一点。", "预算 30 元内或少油偏好强时不优先。"),
@@ -1570,13 +1559,13 @@
       meal("香辣烤鱼饭", "🐟", 39, 28, ["spicy", "hot", "team"], ["spicy", "seafood"], ["happy", "protein"], 5, 4, 4, "重口满足感强，适合想吃一顿开心的。", "适合不赶时间、想和同事一起吃。", "不吃辣、不吃海鲜或少油偏好时不适合。"),
       meal("章鱼小丸子便当", "🍱", 31, 18, ["comfort", "desk", "takeaway"], ["seafood"], ["happy"], 3, 3, 0, "有零食感和仪式感，适合不想吃传统正餐。", "适合工位吃、想轻松一点。", "不吃海鲜或需要高饱腹时不优先。"),
       meal("烤冷面加蛋", "🥚", 17, 8, ["comfort", "rush", "desk"], [], ["happy"], 3, 3, 1, "便宜、快、有满足感，适合预算很紧的中午。", "适合赶时间、想吃点有味道的。", "营养结构不完整，不能长期连续吃。", true),
-      meal("鸡腿汉堡套餐", "🍔", 29, 12, ["comfort", "rush", "desk"], [], ["happy", "protein"], 4, 4, 0, "快、稳定、满足感强，不需要等太久。", "适合赶时间、想吃安慰餐。", "油脂偏高，少油轻负担时不优先。"),
+      meal("鸡腿汉堡套餐", "🍔", 29, 12, ["comfort", "rush", "desk"], [], ["happy", "protein"], 4, 4, 0, "快、稳定、满足感强，不需要等太久。", "适合赶时间、想吃满足一点。", "油脂偏高，少油轻负担时不优先。"),
       meal("墨西哥鸡肉卷", "🌯", 37, 16, ["fresh", "takeaway", "protein"], [], ["balanced", "protein"], 4, 2, 1, "蔬菜和鸡肉比例不错，口味比轻食更有满足感。", "适合外卖、想补蛋白但不想吃饭。", "预算 30 元内时不优先。"),
       meal("番茄鸡肉意面", "🍝", 35, 25, ["comfort", "takeaway", "protein"], [], ["balanced", "protein"], 4, 2, 0, "酸甜口稳定，饱腹感不错，比奶油意面负担低。", "适合想吃西式简餐、下午不赶。", "赶时间或低预算时不优先。"),
       meal("寿司便当", "🍣", 39, 15, ["fresh", "desk", "takeaway"], ["seafood"], ["light", "balanced"], 3, 1, 0, "干净、方便、速度快，适合工位吃。", "适合清爽口味、下午有安排。", "不吃海鲜或特别饿时不建议。"),
       meal("关东煮便利店组合", "🍢", 22, 7, ["hot", "rush", "desk"], [], ["balanced"], 3, 2, 0, "热乎又快，适合没有完整午休但想吃点温的。", "适合 15 分钟内解决、预算不高。", "钠含量可能偏高，少盐偏好时不优先。"),
       meal("豆腐蔬菜锅", "🍲", 28, 20, ["hot", "nearby", "fresh"], [], ["light", "balanced"], 3, 1, 0, "热乎、蔬菜多，适合想清淡又不想吃冷食。", "适合素食优先、少油轻负担。", "想吃高蛋白或重口时满足感不足。", true),
-      meal("蔬菜咖喱饭", "🍛", 27, 18, ["comfort", "hot", "nearby"], [], ["balanced", "happy"], 4, 2, 1, "温和有味道，蔬菜和主食都有，价格也稳。", "适合想吃安慰餐但不想太贵。", "不想吃米饭或怕咖喱味留香时不优先。", true),
+      meal("蔬菜咖喱饭", "🍛", 27, 18, ["comfort", "hot", "nearby"], [], ["balanced", "happy"], 4, 2, 1, "温和有味道，蔬菜和主食都有，价格也稳。", "适合想吃满足一点但不想太贵。", "不想吃米饭或怕咖喱味留香时不优先。", true),
       meal("葱油拌面加蛋", "🍜", 18, 9, ["comfort", "rush", "desk"], [], ["happy"], 3, 3, 0, "便宜、快、香气足，适合只想快速吃饱。", "适合预算低、赶时间。", "蔬菜较少，少油轻负担时不优先。", true),
       meal("炸酱面", "🍜", 24, 14, ["comfort", "nearby", "rush"], [], ["happy"], 4, 3, 0, "价格稳定、饱腹感强，适合不想踩雷。", "适合预算 30 元内、想吃面。", "口味偏咸，清爽偏好时不优先。"),
       meal("锅贴小米粥", "🥟", 24, 16, ["hot", "nearby", "team"], [], ["balanced"], 4, 3, 0, "一干一稀，吃起来稳，适合胃口一般又想吃热的。", "适合和同事堂食、预算 30 元内。", "油煎类较多，少油偏好时不优先。"),
@@ -1594,7 +1583,6 @@
       budget: "mid",
       time: "normal",
       taste: "hot",
-      mode: "nearby",
       health: "balanced",
       avoid: new Set(),
       noRepeat: true,
@@ -1663,7 +1651,6 @@
     function scoreMeal(meal) {
       let score = 46;
       if (meal.tags.includes(state.taste)) score += 20;
-      if (meal.tags.includes(state.mode)) score += 14;
       if (meal.health.includes(state.health)) score += 16;
       if (state.health === "light" && meal.oil <= 2) score += 10;
       if (state.health === "protein" && meal.health.includes("protein")) score += 10;
@@ -1677,7 +1664,6 @@
       if (state.health === "happy" && meal.tags.includes("comfort")) score += 14;
       if (state.taste === "spicy" && meal.spicy >= 3) score += 8;
       if (state.taste === "fresh" && meal.oil <= 2) score += 8;
-      if (state.mode === "team" && meal.tags.includes("team")) score += 10;
       if (preference.accepted.includes(meal.name)) score += 5;
       if (preference.skipped.includes(meal.name)) score -= 12;
       if (state.noRepeat && preference.blocked.includes(meal.name)) score -= 70;
@@ -1748,7 +1734,7 @@
         reasonGrid.innerHTML = "";
         altGrid.innerHTML = "";
         blockedCard.innerHTML = "";
-        risk.textContent = "当前条件太严格了。可以提高预算、取消部分忌口，或者把就餐方式改成等外卖。";
+        risk.textContent = "当前条件太严格了。可以提高预算、增加等待时间，或者取消部分忌口。";
         return;
       }
 
