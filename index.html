@@ -1,0 +1,1326 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>午餐盲盒决策助手</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #fffaf1;
+      --paper: #ffffff;
+      --ink: #202124;
+      --muted: #69707a;
+      --line: #ece4d8;
+      --tomato: #e94b35;
+      --tomato-soft: #fff1ed;
+      --leaf: #3f8f5a;
+      --leaf-soft: #edf8ef;
+      --yolk: #ffbe3d;
+      --yolk-soft: #fff7dc;
+      --blue: #4a75a8;
+      --shadow: 0 24px 70px rgba(71, 48, 24, 0.12);
+      --small-shadow: 0 14px 34px rgba(71, 48, 24, 0.08);
+      --micro-shadow: 0 8px 18px rgba(71, 48, 24, 0.06);
+      --ease: cubic-bezier(.2, .8, .2, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 8%, rgba(255, 190, 61, 0.32), transparent 24%),
+        radial-gradient(circle at 84% 12%, rgba(63, 143, 90, 0.16), transparent 26%),
+        radial-gradient(circle at 72% 72%, rgba(233, 75, 53, 0.12), transparent 32%),
+        linear-gradient(180deg, #fffdf8, var(--bg));
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: .46;
+      background-image:
+        linear-gradient(rgba(94, 67, 34, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(94, 67, 34, .03) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,.82), transparent 78%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid rgba(233, 75, 53, .26);
+      outline-offset: 3px;
+    }
+
+    .skip-nav {
+      position: fixed;
+      left: 18px;
+      top: 18px;
+      z-index: 10;
+      transform: translateY(-140%);
+      border-radius: 10px;
+      background: var(--ink);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 760;
+      transition: transform 180ms var(--ease);
+    }
+
+    .skip-nav:focus { transform: translateY(0); }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 22px auto;
+      border: 1px solid rgba(236, 228, 216, .9);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, .76);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+      padding: 22px 34px;
+      border-bottom: 1px solid rgba(236, 228, 216, .82);
+      background: rgba(255, 255, 255, .7);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 820;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: var(--tomato);
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(233, 75, 53, .2);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 26px;
+      color: #424850;
+      font-size: 13px;
+      font-weight: 680;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .button-dark,
+    .button-light {
+      min-height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0 18px;
+      font-size: 13px;
+      font-weight: 760;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease);
+    }
+
+    .button-dark {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(32, 33, 36, .16);
+    }
+
+    .button-light {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+    }
+
+    .button-dark:hover,
+    .button-light:hover { transform: translateY(-1px); box-shadow: var(--micro-shadow); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 42px;
+      min-height: 690px;
+      align-items: center;
+      padding: 86px 64px 58px;
+      background:
+        radial-gradient(circle at 80% 26%, rgba(255, 190, 61, .22), transparent 28%),
+        linear-gradient(125deg, rgba(255,255,255,.95), rgba(255,250,241,.7));
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.86);
+      color: #6a5842;
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 22px 0 20px;
+      font-size: clamp(46px, 6vw, 78px);
+      line-height: .98;
+      letter-spacing: 0;
+    }
+
+    h1 span {
+      display: block;
+      color: #5f4730;
+      font-weight: 560;
+    }
+
+    .hero-copy {
+      max-width: 530px;
+      margin: 0 0 30px;
+      color: #5f6670;
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+
+    .app-window {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 34px 86px rgba(71, 48, 24, .14);
+      overflow: hidden;
+    }
+
+    .window-top {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .dots { display: flex; gap: 7px; }
+    .dots i { width: 9px; height: 9px; border-radius: 50%; background: #dacfbf; }
+    .dots i:nth-child(1) { background: var(--tomato); }
+    .dots i:nth-child(2) { background: var(--yolk); }
+    .dots i:nth-child(3) { background: var(--leaf); }
+
+    .hero-tool {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 0;
+      min-height: 430px;
+    }
+
+    .hero-controls {
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      background: #fffdf8;
+    }
+
+    .mini-label {
+      color: #7a6c5c;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .mini-stack { display: grid; gap: 10px; }
+
+    .mini-pill {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 0 13px;
+      color: #4d535b;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .mini-pill b { color: var(--tomato); font-size: 12px; }
+
+    .hero-result { padding: 24px; }
+
+    .result-plate {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 90% 10%, rgba(255, 190, 61, .2), transparent 28%),
+        #fff;
+      padding: 22px;
+      box-shadow: var(--small-shadow);
+    }
+
+    .meal-emoji { font-size: 48px; line-height: 1; margin-bottom: 14px; }
+
+    .result-plate h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      line-height: 1.16;
+    }
+
+    .result-plate p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+
+    .score-card {
+      border-radius: 12px;
+      background: var(--yolk-soft);
+      padding: 11px;
+      font-size: 12px;
+      color: #6b5c42;
+      font-weight: 720;
+    }
+
+    .score-card strong { display: block; color: var(--ink); font-size: 18px; margin-bottom: 3px; }
+
+    .section {
+      padding: 72px 64px;
+      border-top: 1px solid rgba(236, 228, 216, .86);
+      background: rgba(255,255,255,.72);
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 34px;
+    }
+
+    .section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+
+    .section h2 {
+      margin: 18px 0 14px;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .section p { margin: 0; color: #5f6670; line-height: 1.7; font-size: 16px; }
+
+    .card-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+
+    .insight-card,
+    .research-card,
+    .flow-card,
+    .metric-card,
+    .iteration-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255,255,255,.9);
+      box-shadow: var(--small-shadow);
+      padding: 22px;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease);
+    }
+
+    .insight-card:hover,
+    .research-card:hover,
+    .flow-card:hover,
+    .metric-card:hover,
+    .iteration-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(233, 75, 53, .24);
+      box-shadow: 0 18px 42px rgba(71, 48, 24, .1);
+    }
+
+    .icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: var(--tomato-soft);
+      color: var(--tomato);
+      font-weight: 840;
+      margin-bottom: 16px;
+    }
+
+    .insight-card h3,
+    .research-card h3,
+    .flow-card h3,
+    .metric-card h3,
+    .iteration-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .insight-card p,
+    .research-card p,
+    .flow-card p,
+    .metric-card p,
+    .iteration-card p { font-size: 14px; line-height: 1.68; color: #656c75; }
+
+    .research-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .research-card ul,
+    .rule-panel ul,
+    .risk-list {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 9px;
+      color: #626a73;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .research-card li,
+    .rule-panel li,
+    .risk-list li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .research-card li::before,
+    .rule-panel li::before,
+    .risk-list li::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--tomato);
+      margin-top: 7px;
+    }
+
+    .tool-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, .88fr) minmax(0, 1.12fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .decision-panel,
+    .recommend-panel,
+    .rule-panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(255,255,255,.92);
+      box-shadow: var(--small-shadow);
+    }
+
+    .decision-panel { padding: 24px; }
+
+    .panel-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-top h3 { margin: 0 0 5px; font-size: 20px; }
+    .panel-top span { color: var(--muted); font-size: 13px; }
+
+    .status {
+      flex: 0 0 auto;
+      min-height: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      background: var(--leaf-soft);
+      color: var(--leaf);
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--leaf);
+      box-shadow: 0 0 0 4px rgba(63, 143, 90, .12);
+    }
+
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .group-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #695c4e;
+      font-size: 12px;
+      font-weight: 820;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .group-label span { color: var(--tomato); text-transform: none; }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .option {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      color: #414850;
+      cursor: pointer;
+      padding: 0 12px;
+      text-align: left;
+      transition: border-color 180ms var(--ease), background 180ms var(--ease), color 180ms var(--ease), transform 180ms var(--ease), box-shadow 180ms var(--ease);
+    }
+
+    .option:hover { transform: translateY(-1px); box-shadow: var(--micro-shadow); }
+
+    .option.active {
+      border-color: rgba(233, 75, 53, .42);
+      background: var(--tomato-soft);
+      color: var(--tomato);
+      font-weight: 800;
+    }
+
+    .avoid-grid { grid-template-columns: 1fr; }
+
+    .recommend-panel { overflow: hidden; }
+
+    .recommend-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      background: #fffdf8;
+    }
+
+    .recommend-top strong { font-size: 15px; }
+    .recommend-top button {
+      min-height: 36px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--tomato);
+      color: #fff;
+      cursor: pointer;
+      padding: 0 14px;
+      font-weight: 800;
+      box-shadow: 0 12px 22px rgba(233, 75, 53, .16);
+    }
+
+    .recommend-body { padding: 24px; display: grid; gap: 16px; }
+
+    .main-meal {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 88% 12%, rgba(255, 190, 61, .22), transparent 28%),
+        #fff;
+      padding: 24px;
+    }
+
+    .meal-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+
+    .meal-title { display: flex; gap: 14px; align-items: center; }
+    .meal-title span { font-size: 42px; line-height: 1; }
+    .meal-title h3 { margin: 0 0 5px; font-size: 26px; line-height: 1.16; }
+    .meal-title small { color: var(--muted); font-weight: 720; }
+
+    .match-score {
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: var(--leaf-soft);
+      color: var(--leaf);
+      font-weight: 900;
+      box-shadow: inset 0 0 0 8px rgba(63, 143, 90, .08);
+    }
+
+    .reason-grid,
+    .alt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .reason-card,
+    .alt-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .reason-card strong,
+    .alt-card strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .reason-card p,
+    .alt-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .risk-note {
+      border-left: 3px solid var(--tomato);
+      padding-left: 13px;
+      color: #765344;
+      font-size: 13px;
+      line-height: 1.62;
+    }
+
+    .empty-state {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--yolk-soft);
+      padding: 22px;
+      color: #6b5c42;
+      line-height: 1.7;
+    }
+
+    .rule-panel { padding: 24px; margin-top: 18px; }
+    .rule-panel h3 { margin: 0 0 10px; font-size: 22px; }
+    .rule-panel p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    .metrics-layout {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card { min-height: 160px; }
+    .metric-card strong { display: block; font-size: 30px; line-height: 1; margin-bottom: 10px; color: var(--tomato); }
+    .metric-card small { display: inline-flex; margin-bottom: 12px; color: #7a6c5c; font-weight: 800; }
+
+    .iteration-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+      padding: 30px 64px;
+      color: #7b756d;
+      font-size: 13px;
+    }
+
+    @keyframes revealUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero > div,
+    .section-head,
+    .insight-card,
+    .research-card,
+    .flow-card,
+    .decision-panel,
+    .recommend-panel,
+    .metric-card,
+    .iteration-card {
+      animation: revealUp 520ms var(--ease) both;
+    }
+
+    @media (max-width: 1020px) {
+      .hero,
+      .hero-tool,
+      .research-layout,
+      .tool-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-controls { border-right: 0; border-bottom: 1px solid var(--line); }
+      .card-grid, .iteration-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .metrics-layout { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .shell {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+      }
+
+      .nav { padding: 18px 20px; }
+      .nav-links, .nav-actions .button-light { display: none; }
+      .hero, .section { padding: 54px 20px; }
+      h1 { font-size: 42px; }
+      .card-grid,
+      .option-grid,
+      .reason-grid,
+      .alt-grid,
+      .metrics-layout,
+      .iteration-grid { grid-template-columns: 1fr; }
+      .meal-header, .panel-top, .recommend-top { flex-direction: column; align-items: flex-start; }
+      .match-score { width: 64px; height: 64px; }
+      footer { padding: 26px 20px; flex-direction: column; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-nav" href="#top">跳到正文</a>
+  <div class="shell">
+    <nav class="nav" aria-label="页面导航">
+      <a class="brand" href="#top" aria-label="午餐盲盒决策助手首页">
+        <span class="brand-mark">🍱</span>
+        <span>午餐盲盒决策助手</span>
+      </a>
+      <div class="nav-links">
+        <a href="#problem">痛点</a>
+        <a href="#research">调研</a>
+        <a href="#flow">流程</a>
+        <a href="#tool">工具</a>
+        <a href="#metrics">指标</a>
+      </div>
+      <div class="nav-actions">
+        <a class="button-light" href="#research">看调研</a>
+        <a class="button-dark" href="#tool">开始选择</a>
+      </div>
+    </nav>
+
+    <main id="top">
+      <section class="hero">
+        <div>
+          <span class="eyebrow">Decision Tool · Lunch Choice</span>
+          <h1>今天中午，<span>别再纠结吃什么。</span></h1>
+          <p class="hero-copy">一个面向打工人的午餐决策工具：把预算、时间、口味、忌口和健康偏好变成可解释的推荐，帮你在 30 秒内做出午餐选择。</p>
+          <div class="hero-actions">
+            <a class="button-dark" href="#tool">试试盲盒</a>
+            <a class="button-light" href="#flow">看产品流程</a>
+          </div>
+        </div>
+
+        <div class="app-window" aria-label="午餐盲盒工具示意">
+          <div class="window-top">
+            <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <span>Lunch Blindbox</span>
+            <span>规则可解释</span>
+          </div>
+          <div class="hero-tool">
+            <div class="hero-controls">
+              <div class="mini-label">今日条件</div>
+              <div class="mini-stack">
+                <div class="mini-pill">预算 <b>30 元内</b></div>
+                <div class="mini-pill">时间 <b>30 分钟</b></div>
+                <div class="mini-pill">口味 <b>热乎 / 微辣</b></div>
+                <div class="mini-pill">偏好 <b>少油一点</b></div>
+              </div>
+            </div>
+            <div class="hero-result">
+              <div class="result-plate">
+                <div class="meal-emoji">🍜</div>
+                <h2>番茄牛肉粉</h2>
+                <p>热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。</p>
+                <div class="score-grid">
+                  <div class="score-card"><strong>92</strong>匹配分</div>
+                  <div class="score-card"><strong>18min</strong>预计决策</div>
+                  <div class="score-card"><strong>2</strong>替代项</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="problem">
+        <div class="section-head">
+          <span class="eyebrow">Problem</span>
+          <h2>午餐不是小事，是每天重复的决策消耗</h2>
+          <p>打工人的午餐选择看起来简单，实际包含预算、距离、口味、健康、同事意见和时间窗口等多重约束。</p>
+        </div>
+        <div class="card-grid">
+          <article class="insight-card">
+            <div class="icon">01</div>
+            <h3>选择过多</h3>
+            <p>外卖、堂食、便利店、轻食、粉面盖饭都能选，但越多越难快速决定。</p>
+          </article>
+          <article class="insight-card">
+            <div class="icon">02</div>
+            <h3>约束分散</h3>
+            <p>预算、等待时间、忌口和健康偏好经常被临时想起，导致反复重选。</p>
+          </article>
+          <article class="insight-card">
+            <div class="icon">03</div>
+            <h3>同事难统一</h3>
+            <p>多人吃饭时口味差异放大，最后常常回到“随便”和“都行”。</p>
+          </article>
+          <article class="insight-card">
+            <div class="icon">04</div>
+            <h3>复盘缺失</h3>
+            <p>用户每天都在选择午餐，但偏好没有被记住，也没有沉淀成下一次推荐。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="research">
+        <div class="section-head center">
+          <span class="eyebrow">Research & Definition</span>
+          <h2>先定义问题，再做推荐</h2>
+          <p>这个工具不是随机抽签，而是把午餐决策拆成可计算条件，并保留可解释理由。</p>
+        </div>
+        <div class="research-layout">
+          <article class="research-card">
+            <h3>需求挖掘</h3>
+            <p>面向工作日午餐场景，假设用户最常见的目标是：快、稳、别超预算、不要踩雷。</p>
+            <ul>
+              <li>高频场景：午休时间短、外卖选择多、堂食排队不确定。</li>
+              <li>核心诉求：减少决策时间，而不是推荐“最好吃”的绝对答案。</li>
+              <li>关键约束：预算、时间、忌口、口味和健康偏好。</li>
+            </ul>
+          </article>
+          <article class="research-card">
+            <h3>竞品观察</h3>
+            <p>外卖平台擅长展示商家，但不擅长帮用户做决策；抽签工具有趣，但解释不足。</p>
+            <ul>
+              <li>外卖平台：供给丰富，但排序目标不一定等于用户当下需求。</li>
+              <li>随机转盘：降低选择压力，但无法处理预算和忌口。</li>
+              <li>记账/健康工具：关注结果记录，缺少午餐前的即时决策。</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="flow">
+        <div class="section-head center">
+          <span class="eyebrow">Product Flow</span>
+          <h2>把“随便”变成一套可执行流程</h2>
+          <p>从条件输入、规则评分到推荐解释，用户每一步都能理解系统为什么这么推荐。</p>
+        </div>
+        <div class="card-grid">
+          <article class="flow-card">
+            <div class="icon">01</div>
+            <h3>输入条件</h3>
+            <p>选择预算、时间、口味、忌口、就餐方式和健康偏好。</p>
+          </article>
+          <article class="flow-card">
+            <div class="icon">02</div>
+            <h3>规则评分</h3>
+            <p>系统按匹配度加分，并对忌口、预算冲突做硬过滤。</p>
+          </article>
+          <article class="flow-card">
+            <div class="icon">03</div>
+            <h3>解释推荐</h3>
+            <p>展示为什么推荐、适合今天的原因和不适合情况。</p>
+          </article>
+          <article class="flow-card">
+            <div class="icon">04</div>
+            <h3>换一换</h3>
+            <p>不满意时在同条件下切换下一候选，同时保留推荐理由。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="tool">
+        <div class="section-head">
+          <span class="eyebrow">Interactive Tool</span>
+          <h2>选几个条件，午餐自动开盲盒</h2>
+          <p>当前版本使用内置样例餐食和规则引擎，不接外卖平台，也不读取定位。</p>
+        </div>
+        <div class="tool-layout">
+          <form class="decision-panel" id="lunchForm">
+            <div class="panel-top">
+              <div>
+                <h3>今日午餐条件</h3>
+                <span>调整后实时更新推荐</span>
+              </div>
+              <span class="status">Ready</span>
+            </div>
+
+            <div class="form-group" data-group="budget">
+              <div class="group-label">预算 <span>硬约束</span></div>
+              <div class="option-grid">
+                <button class="option" type="button" data-value="low">20 元内</button>
+                <button class="option active" type="button" data-value="mid">30 元内</button>
+                <button class="option" type="button" data-value="high">45 元内</button>
+                <button class="option" type="button" data-value="flex">今天放开</button>
+              </div>
+            </div>
+
+            <div class="form-group" data-group="time">
+              <div class="group-label">时间 <span>出餐速度</span></div>
+              <div class="option-grid">
+                <button class="option" type="button" data-value="rush">15 分钟</button>
+                <button class="option active" type="button" data-value="normal">30 分钟</button>
+                <button class="option" type="button" data-value="slow">慢慢吃</button>
+                <button class="option" type="button" data-value="delivery">等外卖</button>
+              </div>
+            </div>
+
+            <div class="form-group" data-group="taste">
+              <div class="group-label">口味 <span>主偏好</span></div>
+              <div class="option-grid">
+                <button class="option active" type="button" data-value="hot">热乎</button>
+                <button class="option" type="button" data-value="spicy">想吃辣</button>
+                <button class="option" type="button" data-value="fresh">清爽</button>
+                <button class="option" type="button" data-value="comfort">安慰餐</button>
+              </div>
+            </div>
+
+            <div class="form-group" data-group="mode">
+              <div class="group-label">就餐方式 <span>场景</span></div>
+              <div class="option-grid">
+                <button class="option active" type="button" data-value="nearby">附近堂食</button>
+                <button class="option" type="button" data-value="takeaway">外卖</button>
+                <button class="option" type="button" data-value="desk">工位解决</button>
+                <button class="option" type="button" data-value="team">和同事吃</button>
+              </div>
+            </div>
+
+            <div class="form-group" data-group="health">
+              <div class="group-label">健康偏好 <span>软约束</span></div>
+              <div class="option-grid">
+                <button class="option active" type="button" data-value="balanced">均衡一点</button>
+                <button class="option" type="button" data-value="light">少油轻负担</button>
+                <button class="option" type="button" data-value="protein">补蛋白</button>
+                <button class="option" type="button" data-value="happy">开心最重要</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="group-label">忌口 <span>可多选</span></div>
+              <div class="option-grid avoid-grid" id="avoidGrid">
+                <button class="option" type="button" data-avoid="spicy">不吃辣</button>
+                <button class="option" type="button" data-avoid="beef">不吃牛肉</button>
+                <button class="option" type="button" data-avoid="seafood">不吃海鲜</button>
+                <button class="option" type="button" data-avoid="meat">素食优先</button>
+              </div>
+            </div>
+          </form>
+
+          <section class="recommend-panel" aria-live="polite">
+            <div class="recommend-top">
+              <strong>今日推荐</strong>
+              <button type="button" id="shuffleButton">换一换</button>
+            </div>
+            <div class="recommend-body">
+              <div class="empty-state" id="emptyState">
+                暂时没有完全匹配的午餐。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
+              </div>
+              <article class="main-meal" id="mainMeal"></article>
+              <div class="reason-grid" id="reasonGrid"></div>
+              <div class="alt-grid" id="altGrid"></div>
+              <div class="risk-note" id="riskNote"></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="rule-panel">
+          <h3>推荐规则怎么工作</h3>
+          <p>系统先过滤硬冲突，再根据条件加权评分。DeepSeek V4 Flash 可以作为后续增强层，用后端代理生成更自然的解释和追问，但不把密钥放在公开前端。</p>
+          <ul>
+            <li>硬过滤：预算超出、忌口冲突、素食优先与肉类冲突。</li>
+            <li>软评分：口味、时间、就餐方式、健康偏好越匹配，分数越高。</li>
+            <li>换一换：在同一条件下取下一高分候选，避免每次都只推荐一个。</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="section" id="metrics">
+        <div class="section-head center">
+          <span class="eyebrow">Metrics</span>
+          <h2>上线后看这些指标</h2>
+          <p>这个工具的目标不是让用户浏览更多，而是更快、更稳地做出午餐选择。</p>
+        </div>
+        <div class="metrics-layout">
+          <article class="metric-card">
+            <small>决策效率</small>
+            <strong>30s</strong>
+            <p>从打开页面到接受推荐的目标耗时。</p>
+          </article>
+          <article class="metric-card">
+            <small>推荐质量</small>
+            <strong>65%</strong>
+            <p>用户首个推荐直接采用或收藏的目标比例。</p>
+          </article>
+          <article class="metric-card">
+            <small>探索意愿</small>
+            <strong>2.1</strong>
+            <p>用户平均换一换次数，用来判断推荐是否太窄。</p>
+          </article>
+          <article class="metric-card">
+            <small>复用价值</small>
+            <strong>3d</strong>
+            <p>连续工作日重复使用率，衡量是否形成习惯。</p>
+          </article>
+          <article class="metric-card">
+            <small>负反馈</small>
+            <strong>&lt;8%</strong>
+            <p>忌口冲突、预算不符、推荐不想吃等反馈比例。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="iterate">
+        <div class="section-head">
+          <span class="eyebrow">Iteration</span>
+          <h2>后续迭代方向</h2>
+          <p>从规则可用的 MVP 出发，再逐步接入真实供给、团队场景和个性化偏好。</p>
+        </div>
+        <div class="iteration-grid">
+          <article class="iteration-card">
+            <h3>同事投票</h3>
+            <p>多人一起吃饭时，收集预算和忌口，给出团队最大公约数推荐。</p>
+          </article>
+          <article class="iteration-card">
+            <h3>附近商家</h3>
+            <p>后续接入商圈、距离和营业状态，减少推荐不可执行的问题。</p>
+          </article>
+          <article class="iteration-card">
+            <h3>历史偏好</h3>
+            <p>记录用户采纳和跳过行为，逐步学习“最近不想再吃什么”。</p>
+          </article>
+          <article class="iteration-card">
+            <h3>AI 解释</h3>
+            <p>通过安全后端调用低成本模型，生成更自然的理由和追问。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>午餐盲盒决策助手 · 规则可用的生活决策工具</span>
+      <span>Lunch Decision Product · 2026</span>
+    </footer>
+  </div>
+
+  <script>
+    const budgetLimit = { low: 20, mid: 30, high: 45, flex: 999 };
+    const labels = {
+      budget: { low: "20 元内", mid: "30 元内", high: "45 元内", flex: "今天放开" },
+      time: { rush: "15 分钟", normal: "30 分钟", slow: "慢慢吃", delivery: "等外卖" },
+      taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "安慰餐" },
+      mode: { nearby: "附近堂食", takeaway: "外卖", desk: "工位解决", team: "和同事吃" },
+      health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" }
+    };
+
+    const meals = [
+      {
+        name: "番茄牛肉粉",
+        emoji: "🍜",
+        price: 28,
+        time: 18,
+        tags: ["hot", "comfort", "nearby", "protein"],
+        avoid: ["beef"],
+        health: ["balanced", "protein"],
+        reason: "热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。",
+        fit: "适合想吃热乎、午休时间一般、下午还要继续工作的日子。",
+        caution: "不吃牛肉或想少汤水时不适合。"
+      },
+      {
+        name: "麻辣烫轻菜版",
+        emoji: "🥘",
+        price: 25,
+        time: 24,
+        tags: ["spicy", "hot", "nearby", "team"],
+        avoid: ["spicy"],
+        health: ["balanced", "happy"],
+        reason: "口味满足感强，配菜自由度高，可以通过少放丸子和少油来控制负担。",
+        fit: "适合想吃辣、又希望自己控制菜量和主食的人。",
+        caution: "不吃辣、赶时间或下午要开长会时不建议。"
+      },
+      {
+        name: "鸡胸轻食碗",
+        emoji: "🥗",
+        price: 32,
+        time: 20,
+        tags: ["fresh", "takeaway", "desk", "protein"],
+        avoid: [],
+        health: ["light", "protein", "balanced"],
+        reason: "蛋白质稳定，油脂较低，适合想减少午后困意的工作日。",
+        fit: "适合轻负担、工位解决、下午需要保持清醒的场景。",
+        caution: "预算 20 元内或今天想吃安慰餐时满足感可能不足。"
+      },
+      {
+        name: "照烧鸡腿饭",
+        emoji: "🍱",
+        price: 29,
+        time: 16,
+        tags: ["hot", "comfort", "nearby", "takeaway", "protein"],
+        avoid: [],
+        health: ["balanced", "protein", "happy"],
+        reason: "主食、肉和配菜都有，出餐稳定，适合不想冒险的午餐选择。",
+        fit: "适合预算 30 元内、想快速吃饱、对口味没有强刺激需求的人。",
+        caution: "酱汁偏甜，少油偏好强时可以换轻食或便利店组合。"
+      },
+      {
+        name: "便利店饭团酸奶组合",
+        emoji: "🍙",
+        price: 19,
+        time: 6,
+        tags: ["fresh", "desk", "rush"],
+        avoid: [],
+        health: ["light", "balanced"],
+        reason: "最快、最稳、预算低，适合会议前后没有完整午休的情况。",
+        fit: "适合 15 分钟内解决、预算敏感、只想不饿的日子。",
+        caution: "饱腹感有限，下午容易饿时建议加鸡蛋或水果。"
+      },
+      {
+        name: "港式茶餐厅双拼饭",
+        emoji: "🍛",
+        price: 42,
+        time: 32,
+        tags: ["comfort", "team", "nearby", "hot"],
+        avoid: [],
+        health: ["happy"],
+        reason: "适合和同事一起吃，菜品接受度高，社交成本低。",
+        fit: "适合不赶时间、需要团队统一意见、今天想吃满足一点。",
+        caution: "预算 30 元内或少油偏好强时不优先。"
+      },
+      {
+        name: "日料饭团便当",
+        emoji: "🍣",
+        price: 36,
+        time: 26,
+        tags: ["fresh", "takeaway", "desk", "comfort"],
+        avoid: ["seafood"],
+        health: ["balanced", "light"],
+        reason: "口味清爽，适合不想吃重油重辣但又想有一点仪式感。",
+        fit: "适合外卖、工位吃、清爽口味或下午有拍照/见人安排。",
+        caution: "不吃海鲜或预算较紧时不建议。"
+      },
+      {
+        name: "素食拌饭",
+        emoji: "🥬",
+        price: 24,
+        time: 18,
+        tags: ["fresh", "nearby", "desk"],
+        avoid: [],
+        vegetarian: true,
+        health: ["light", "balanced"],
+        reason: "蔬菜占比高、预算可控，适合想清爽一点又不想只吃沙拉。",
+        fit: "适合素食优先、少油轻负担、预算 30 元内的场景。",
+        caution: "想补蛋白或重口味时满足感可能不足。"
+      }
+    ];
+
+    const state = {
+      budget: "mid",
+      time: "normal",
+      taste: "hot",
+      mode: "nearby",
+      health: "balanced",
+      avoid: new Set(),
+      offset: 0
+    };
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function conflicts(meal) {
+      if (meal.price > budgetLimit[state.budget]) return true;
+      if (state.avoid.has("meat") && !meal.vegetarian) return true;
+      return [...state.avoid].some((item) => meal.avoid.includes(item));
+    }
+
+    function scoreMeal(meal) {
+      let score = 50;
+      if (meal.tags.includes(state.taste)) score += 18;
+      if (meal.tags.includes(state.mode)) score += 14;
+      if (meal.health.includes(state.health)) score += 16;
+      if (state.time === "rush" && meal.time <= 15) score += 18;
+      if (state.time === "normal" && meal.time <= 30) score += 12;
+      if (state.time === "slow" && meal.time > 25) score += 8;
+      if (state.time === "delivery" && meal.tags.includes("takeaway")) score += 15;
+      if (state.budget === "low" && meal.price <= 20) score += 12;
+      if (state.budget === "mid" && meal.price <= 30) score += 8;
+      if (state.health === "happy" && meal.tags.includes("comfort")) score += 14;
+      return Math.min(99, score);
+    }
+
+    function rankedMeals() {
+      return meals
+        .filter((meal) => !conflicts(meal))
+        .map((meal) => ({ ...meal, score: scoreMeal(meal) }))
+        .sort((a, b) => b.score - a.score || a.price - b.price);
+    }
+
+    function reasonCards(meal) {
+      return [
+        { title: "为什么是它", text: meal.reason },
+        { title: "适合今天", text: `${labels.budget[state.budget]}、${labels.time[state.time]}、${labels.taste[state.taste]}，匹配当前午餐约束。` },
+        { title: "预计成本", text: `约 ${meal.price} 元，预计 ${meal.time} 分钟完成点餐和用餐。` },
+        { title: "不适合情况", text: meal.caution }
+      ];
+    }
+
+    function updateOptions() {
+      document.querySelectorAll(".form-group[data-group]").forEach((group) => {
+        const groupName = group.dataset.group;
+        group.querySelectorAll(".option").forEach((button) => {
+          const active = button.dataset.value === state[groupName];
+          button.classList.toggle("active", active);
+          button.setAttribute("aria-pressed", active ? "true" : "false");
+        });
+      });
+      document.querySelectorAll("[data-avoid]").forEach((button) => {
+        const active = state.avoid.has(button.dataset.avoid);
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+
+    function render() {
+      updateOptions();
+      const list = rankedMeals();
+      const empty = document.getElementById("emptyState");
+      const main = document.getElementById("mainMeal");
+      const reasonGrid = document.getElementById("reasonGrid");
+      const altGrid = document.getElementById("altGrid");
+      const risk = document.getElementById("riskNote");
+
+      if (!list.length) {
+        empty.style.display = "block";
+        main.style.display = "none";
+        reasonGrid.innerHTML = "";
+        altGrid.innerHTML = "";
+        risk.textContent = "系统没有强行推荐，是因为当前条件存在硬冲突。放宽一个条件会比随机推荐更可靠。";
+        return;
+      }
+
+      empty.style.display = "none";
+      main.style.display = "block";
+      const index = state.offset % list.length;
+      const meal = list[index];
+      const alternatives = list.filter((_, i) => i !== index).slice(0, 2);
+      main.innerHTML = `
+        <div class="meal-header">
+          <div class="meal-title">
+            <span>${escapeHTML(meal.emoji)}</span>
+            <div>
+              <h3>${escapeHTML(meal.name)}</h3>
+              <small>${escapeHTML(meal.price)} 元左右 · ${escapeHTML(meal.time)} 分钟 · 规则匹配</small>
+            </div>
+          </div>
+          <div class="match-score">${escapeHTML(meal.score)}</div>
+        </div>
+        <p>${escapeHTML(meal.reason)}</p>
+      `;
+
+      reasonGrid.innerHTML = reasonCards(meal).map((item) => `
+        <article class="reason-card">
+          <strong>${escapeHTML(item.title)}</strong>
+          <p>${escapeHTML(item.text)}</p>
+        </article>
+      `).join("");
+
+      altGrid.innerHTML = alternatives.map((item) => `
+        <article class="alt-card">
+          <strong>${escapeHTML(item.emoji)} ${escapeHTML(item.name)}</strong>
+          <p>${escapeHTML(item.price)} 元 · ${escapeHTML(item.time)} 分钟 · 匹配分 ${escapeHTML(item.score)}</p>
+        </article>
+      `).join("");
+
+      risk.textContent = `风险提醒：这不是外卖平台排序，也不会读取定位。当前推荐只基于样例餐食和规则评分，真实上线需要接入附近供给、营业状态和用户历史反馈。`;
+    }
+
+    document.querySelectorAll(".form-group[data-group] .option").forEach((button) => {
+      button.addEventListener("click", () => {
+        const group = button.closest(".form-group").dataset.group;
+        state[group] = button.dataset.value;
+        state.offset = 0;
+        render();
+      });
+    });
+
+    document.querySelectorAll("[data-avoid]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const value = button.dataset.avoid;
+        if (state.avoid.has(value)) state.avoid.delete(value);
+        else state.avoid.add(value);
+        state.offset = 0;
+        render();
+      });
+    });
+
+    document.getElementById("shuffleButton").addEventListener("click", () => {
+      state.offset += 1;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
