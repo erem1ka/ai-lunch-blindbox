@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>午餐盲盒决策助手</title>
+  <title>吃什么盲盒决策助手</title>
   <link rel="icon" href="data:,">
   <style>
     :root {
@@ -1155,9 +1155,9 @@
   <a class="skip-nav" href="#top">跳到正文</a>
   <div class="shell">
     <nav class="nav" aria-label="页面导航">
-      <a class="brand" href="#top" aria-label="午餐盲盒决策助手首页">
+      <a class="brand" href="#top" aria-label="吃什么盲盒决策助手首页">
         <span class="brand-mark">🍱</span>
-        <span>午餐盲盒决策助手</span>
+        <span>吃什么盲盒决策助手</span>
       </a>
       <div class="nav-links">
         <a href="#tool">工具</a>
@@ -1170,19 +1170,19 @@
     <main id="top">
       <section class="hero">
         <div>
-          <span class="eyebrow">Decision Tool · Lunch Choice</span>
-          <h2 class="hero-title">今天中午，<span>别再纠结吃什么。</span></h2>
-          <p class="hero-copy">输入预算、时间、口味、忌口和健康偏好，马上得到一个适合今天的午餐推荐。想换也可以，一键再开一份。</p>
+          <span class="eyebrow">Decision Tool · Meal Choice</span>
+          <h2 class="hero-title">这一顿，<span>别再纠结吃什么。</span></h2>
+          <p class="hero-copy">输入预算、时间、口味、忌口和健康偏好，马上得到一个适合当前场景的餐食推荐。想换也可以，一键再开一份。</p>
           <div class="hero-actions">
             <a class="button-dark" href="#tool">试试盲盒</a>
             <a class="button-light" href="#why">看推荐亮点</a>
           </div>
         </div>
 
-        <div class="app-window" aria-label="午餐盲盒工具示意">
+        <div class="app-window" aria-label="吃什么盲盒工具示意">
           <div class="window-top">
             <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
-            <span>Lunch Blindbox</span>
+            <span>Meal Blindbox</span>
             <span>今日推荐</span>
           </div>
           <div class="hero-tool">
@@ -1201,7 +1201,7 @@
                 <h2>番茄牛肉粉</h2>
                 <p>热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。</p>
                 <div class="score-grid">
-                  <div class="score-card"><strong>48</strong>午餐选项</div>
+                  <div class="score-card"><strong>48</strong>餐食选项</div>
                   <div class="score-card"><strong>18min</strong>预计用时</div>
                   <div class="score-card"><strong>3</strong>今日建议</div>
                 </div>
@@ -1213,20 +1213,20 @@
 
       <section class="section" id="scenes" hidden>
         <div class="section-head">
-          <span class="eyebrow">Lunch Moments</span>
-          <h2>适合这些午餐时刻</h2>
-          <p>不是每顿饭都值得花十分钟纠结。把今天的限制告诉它，让午餐选择快一点、稳一点。</p>
+          <span class="eyebrow">Meal Moments</span>
+          <h2>适合这些吃饭时刻</h2>
+          <p>不是每顿饭都值得花十分钟纠结。把当下的限制告诉它，让吃饭选择快一点、稳一点。</p>
         </div>
         <div class="card-grid">
           <article class="insight-card">
             <div class="icon">01</div>
-            <h3>午休很短</h3>
+            <h3>时间很短</h3>
             <p>下午有会、只想快点吃完时，优先给出出餐快、等待少的选择。</p>
           </article>
           <article class="insight-card">
             <div class="icon">02</div>
             <h3>预算有限</h3>
-            <p>先卡住价格范围，再推荐能吃饱、风险低、不太将就的午餐。</p>
+            <p>先卡住价格范围，再推荐能吃饱、风险低、不太将就的餐食。</p>
           </article>
           <article class="insight-card">
             <div class="icon">03</div>
@@ -1250,7 +1250,7 @@
         <div class="research-layout">
           <article class="research-card">
             <h3>先避开不能吃的</h3>
-            <p>忌口和预算会优先处理，避免推荐出你一眼就会排除的午餐。</p>
+            <p>忌口和预算会优先处理，避免推荐出你一眼就会排除的餐食。</p>
             <ul>
               <li>不吃辣时，不推荐辣味选项。</li>
               <li>预算 20 元内时，优先低价可执行选择。</li>
@@ -1301,15 +1301,15 @@
 
       <section class="section" id="tool">
         <div class="section-head">
-          <span class="eyebrow">Lunch Picker</span>
-          <h1>选条件，午餐开盲盒</h1>
+          <span class="eyebrow">Meal Picker</span>
+          <h1>选条件，今天吃什么</h1>
         </div>
         <div class="tool-stage">
           <div class="tool-layout">
-            <form class="decision-panel" id="lunchForm">
+            <form class="decision-panel" id="mealForm">
               <div class="panel-top">
                 <div>
-                  <h3>今日午餐条件</h3>
+                  <h3>今日用餐条件</h3>
                   <span>调整后实时更新推荐</span>
                 </div>
                 <span class="status">已就绪</span>
@@ -1394,7 +1394,7 @@
               </div>
               <div class="recommend-body">
                 <div class="empty-state" id="emptyState">
-                  暂时没有完全匹配的午餐。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
+                  暂时没有完全匹配的选择。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
                 </div>
                 <article class="main-meal" id="mainMeal"></article>
                 <div class="feedback-actions" id="feedbackActions">
@@ -1411,7 +1411,7 @@
             </section>
           </div>
 
-          <aside class="portal-panel" id="portal" aria-label="午餐信息传送门" hidden>
+          <aside class="portal-panel" id="portal" aria-label="吃饭信息传送门" hidden>
             <span class="portal-label">Info Portal</span>
             <h3>需要多看一眼？</h3>
             <p>说明内容不挤在主界面里。想了解怎么用、推荐怎么理解、偏好怎么保存时，从这里跳过去。</p>
@@ -1445,7 +1445,7 @@
         <div class="section-head center">
           <span class="eyebrow">Info Pages</span>
           <h2>说明放在这里，主界面保持轻</h2>
-          <p>这些页面只在你需要时查看，不打断“选条件 → 看推荐 → 决定午餐”的主路径。</p>
+          <p>这些页面只在你需要时查看，不打断“选条件 → 看推荐 → 决定吃什么”的主路径。</p>
         </div>
         <div class="info-grid">
           <article class="info-page" id="guide" data-index="01">
@@ -1463,9 +1463,9 @@
           <article class="info-page" id="recommend-info" data-index="02">
             <span class="eyebrow">Recommendation</span>
             <h3>怎么看推荐</h3>
-            <p>页面会给你一份首推、两份备选，以及一份暂时不推荐的午餐。这样不是只给答案，也顺手告诉你为什么不是别的。</p>
+            <p>页面会给你一份首推、两份备选，以及一份暂时不推荐的餐食。这样不是只给答案，也顺手告诉你为什么不是别的。</p>
             <ul>
-              <li>首推：最贴近当前条件的午餐。</li>
+              <li>首推：最贴近当前条件的餐食。</li>
               <li>备选：同样条件下仍然合适的替代方案。</li>
               <li>暂不推荐：因为预算、忌口或口味不合适，先放到后面。</li>
             </ul>
@@ -1487,9 +1487,9 @@
           <article class="info-page" id="more-info" data-index="04">
             <span class="eyebrow">More</span>
             <h3>以后可以加什么</h3>
-            <p>现在先用内置午餐池完成选择。等你需要更真实的版本，可以继续加入附近商家、同事投票和自然语言输入。</p>
+            <p>现在先用内置餐食池完成选择。等你需要更真实的版本，可以继续加入附近商家、同事投票和自然语言输入。</p>
             <ul>
-              <li>附近商家：把午餐类型变成可下单门店。</li>
+              <li>附近商家：把餐食类型变成可下单门店。</li>
               <li>同事投票：多人一起吃饭时自动合并忌口和预算。</li>
               <li>自然语言：直接输入“今天有点累，想吃热的，别太贵”。</li>
             </ul>
@@ -1500,14 +1500,14 @@
     </main>
 
     <footer>
-      <span>午餐盲盒决策助手 · 今天中午吃点什么</span>
-      <span>Lunch Decision · 2026</span>
+      <span>吃什么盲盒决策助手 · 今天吃点什么</span>
+      <span>Meal Decision · 2026</span>
     </footer>
   </div>
 
   <script>
     const budgetLimit = { low: 20, mid: 30, high: 45, flex: 999 };
-    const storageKey = "lunchBlindboxPreferenceV2";
+    const storageKey = "mealBlindboxPreferenceV2";
     const storage = (() => {
       try {
         return window.localStorage || null;
@@ -1543,7 +1543,7 @@
       meal("番茄牛肉粉", "🍜", 28, 18, ["hot", "comfort", "nearby", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0, "热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。", "适合想吃热乎、午休时间一般、下午还要继续工作的日子。", "不吃牛肉或想少汤水时不适合。"),
       meal("麻辣烫轻菜版", "🥘", 25, 24, ["spicy", "hot", "nearby", "team"], ["spicy"], ["balanced", "happy"], 4, 3, 3, "口味满足感强，配菜自由度高，可以通过少放丸子和少油来控制负担。", "适合想吃辣、又希望自己控制菜量和主食的人。", "不吃辣、赶时间或下午要开长会时不建议。"),
       meal("鸡胸轻食碗", "🥗", 32, 20, ["fresh", "takeaway", "desk", "protein"], [], ["light", "protein", "balanced"], 3, 1, 0, "蛋白质稳定，油脂较低，适合想减少午后困意的工作日。", "适合轻负担、工位解决、下午需要保持清醒的场景。", "预算 20 元内或今天想吃安慰餐时满足感可能不足。"),
-      meal("照烧鸡腿饭", "🍱", 29, 16, ["hot", "comfort", "nearby", "takeaway", "protein"], [], ["balanced", "protein", "happy"], 5, 3, 0, "主食、肉和配菜都有，出餐稳定，适合不想冒险的午餐选择。", "适合预算 30 元内、想快速吃饱、对口味没有强刺激想法的人。", "酱汁偏甜，少油偏好强时可以换轻食或便利店组合。"),
+      meal("照烧鸡腿饭", "🍱", 29, 16, ["hot", "comfort", "nearby", "takeaway", "protein"], [], ["balanced", "protein", "happy"], 5, 3, 0, "主食、肉和配菜都有，出餐稳定，适合不想冒险的用餐选择。", "适合预算 30 元内、想快速吃饱、对口味没有强刺激想法的人。", "酱汁偏甜，少油偏好强时可以换轻食或便利店组合。"),
       meal("便利店饭团酸奶组合", "🍙", 19, 6, ["fresh", "desk", "rush"], [], ["light", "balanced"], 2, 1, 0, "最快、最稳、预算低，适合会议前后没有完整午休的情况。", "适合 15 分钟内解决、预算敏感、只想不饿的日子。", "饱腹感有限，下午容易饿时建议加鸡蛋或水果。"),
       meal("港式茶餐厅双拼饭", "🍛", 42, 32, ["comfort", "team", "nearby", "hot"], [], ["happy"], 5, 4, 0, "菜品接受度高，适合和同事一起吃，今天不想继续纠结时很稳。", "适合不赶时间、需要大家都能接受、想吃满足一点。", "预算 30 元内或少油偏好强时不优先。"),
       meal("日料饭团便当", "🍣", 36, 26, ["fresh", "takeaway", "desk", "comfort"], ["seafood"], ["balanced", "light"], 3, 1, 0, "口味清爽，适合不想吃重油重辣但又想有一点仪式感。", "适合外卖、工位吃、清爽口味或下午有拍照/见人安排。", "不吃海鲜或预算较紧时不建议。"),
@@ -1552,18 +1552,18 @@
       meal("沙县鸡腿饭", "🍗", 23, 12, ["hot", "nearby", "rush", "protein"], [], ["balanced", "protein"], 4, 3, 0, "便宜、快、饱腹感强，适合不想动脑的工作日。", "适合预算有限、需要快点吃完。", "口味惊喜少，少油偏好强时不优先。"),
       meal("黄焖鸡米饭", "🍲", 27, 20, ["hot", "comfort", "nearby", "protein"], [], ["balanced", "happy"], 5, 4, 1, "热菜热饭、饱腹感强，适合想吃正餐的中午。", "适合今天想吃热乎、有完整午休。", "油脂和酱汁偏重，下午容易困的人慎选。"),
       meal("石锅拌饭", "🍚", 34, 24, ["hot", "comfort", "team"], [], ["balanced", "happy"], 4, 3, 1, "主食、蔬菜和蛋白都有，口味比普通盖饭更有变化。", "适合和同事堂食，想吃热乎但不想太辣。", "赶时间或预算 30 元内时不优先。"),
-      meal("泡菜豆腐锅", "🍲", 31, 26, ["spicy", "hot", "nearby"], ["spicy"], ["balanced", "light"], 3, 2, 3, "汤锅类更暖，豆腐和蔬菜比例高，负担比炸物低。", "适合想吃辣、又不想太油的午餐。", "不吃辣或下午怕出汗时不建议。", true),
+      meal("泡菜豆腐锅", "🍲", 31, 26, ["spicy", "hot", "nearby"], ["spicy"], ["balanced", "light"], 3, 2, 3, "汤锅类更暖，豆腐和蔬菜比例高，负担比炸物低。", "适合想吃辣、又不想太油的一餐。", "不吃辣或下午怕出汗时不建议。", true),
       meal("鲜虾云吞面", "🥟", 33, 18, ["hot", "fresh", "nearby"], ["seafood"], ["balanced"], 3, 2, 0, "汤面清爽、出餐快，适合不想吃太重的热食。", "适合想热乎但不想油腻。", "不吃海鲜或想高蛋白时不优先。"),
       meal("猪脚饭小份", "🍖", 32, 16, ["comfort", "hot", "nearby"], [], ["happy"], 5, 5, 0, "满足感强，适合真的饿、需要快速回血的时候。", "适合不想清淡、今天需要吃饱。", "油脂较高，下午要保持清醒时不优先。"),
       meal("肉夹馍凉皮组合", "🥙", 24, 13, ["fresh", "rush", "desk"], [], ["balanced", "happy"], 4, 3, 1, "一热一凉，速度快，价格也比较稳。", "适合预算有限、想换换口味。", "不适合严格少油或不想吃面食的人。"),
       meal("酸汤肥牛饭", "🍛", 35, 22, ["spicy", "hot", "takeaway", "protein"], ["spicy", "beef"], ["protein", "happy"], 5, 3, 3, "酸辣开胃，蛋白质足，适合没胃口但想吃正餐。", "适合想吃辣、预算稍微放开。", "不吃辣或不吃牛肉时不适合。"),
-      meal("牛油果鸡蛋三明治", "🥪", 26, 8, ["fresh", "desk", "rush"], [], ["light", "balanced"], 2, 1, 0, "轻便、快取、不会太撑，适合会议前的午餐。", "适合工位解决、少油轻负担。", "饱腹感偏弱，特别饿时建议加酸奶。", true),
+      meal("牛油果鸡蛋三明治", "🥪", 26, 8, ["fresh", "desk", "rush"], [], ["light", "balanced"], 2, 1, 0, "轻便、快取、不会太撑，适合会议前后快速吃一顿。", "适合工位解决、少油轻负担。", "饱腹感偏弱，特别饿时建议加酸奶。", true),
       meal("咖啡店鸡肉卷", "🌯", 34, 10, ["fresh", "desk", "takeaway", "protein"], [], ["balanced", "protein"], 3, 2, 0, "拿取快、吃起来干净，不太影响下午状态。", "适合边工作边吃、想补蛋白。", "价格比便利店组合高，预算低时不优先。"),
-      meal("皮蛋瘦肉粥", "🥣", 21, 12, ["hot", "rush", "nearby"], [], ["light", "balanced"], 2, 1, 0, "热乎、轻负担，适合胃口一般或不想吃太硬的午餐。", "适合赶时间、想吃热的但不想油。", "饱腹感一般，体力消耗大时不够顶。"),
+      meal("皮蛋瘦肉粥", "🥣", 21, 12, ["hot", "rush", "nearby"], [], ["light", "balanced"], 2, 1, 0, "热乎、轻负担，适合胃口一般或不想吃太硬的一餐。", "适合赶时间、想吃热的但不想油。", "饱腹感一般，体力消耗大时不够顶。"),
       meal("南瓜小米粥素包", "🥣", 18, 10, ["hot", "rush", "desk"], [], ["light"], 2, 1, 0, "温和、便宜、速度快，适合胃不舒服或想清淡一点。", "适合少油轻负担、预算 20 元内。", "蛋白质不足，下午容易饿。", true),
       meal("白菜猪肉饺子", "🥟", 26, 18, ["hot", "nearby", "team"], [], ["balanced"], 4, 2, 0, "热乎、份量稳定，适合不知道吃什么时兜底。", "适合和同事一起吃，选择成本低。", "不想吃面食或想清爽时不优先。"),
       meal("云南过桥米线", "🍜", 29, 20, ["hot", "comfort", "nearby"], [], ["balanced"], 4, 2, 1, "汤底热、配料多，适合想吃有层次的粉面。", "适合预算 30 元内、想吃热乎。", "赶时间时可能稍慢。"),
-      meal("重庆小面", "🍜", 18, 10, ["spicy", "hot", "rush"], ["spicy"], ["happy"], 3, 3, 4, "便宜、快、味道直接，适合想吃辣的午餐。", "适合预算低、赶时间、需要提神。", "不吃辣或下午要见人时不建议。", true),
+      meal("重庆小面", "🍜", 18, 10, ["spicy", "hot", "rush"], ["spicy"], ["happy"], 3, 3, 4, "便宜、快、味道直接，适合想吃辣的时候。", "适合预算低、赶时间、需要提神。", "不吃辣或下午要见人时不建议。", true),
       meal("越南牛肉粉", "🍜", 38, 22, ["fresh", "hot", "takeaway"], ["beef"], ["balanced", "protein"], 3, 1, 0, "清爽汤粉，热乎但不重油，适合想换口味。", "适合不想吃中式盖饭、预算稍宽。", "不吃牛肉或赶时间时不优先。"),
       meal("泰式打抛鸡饭", "🍛", 36, 24, ["spicy", "comfort", "takeaway", "protein"], ["spicy"], ["protein", "happy"], 4, 3, 3, "香气足、蛋白够，适合想吃有味道的饭。", "适合想吃辣、外卖场景。", "不吃辣或想清淡时不适合。"),
       meal("海南鸡饭", "🍗", 34, 22, ["fresh", "team", "nearby", "protein"], [], ["balanced", "protein"], 4, 2, 0, "口味温和、接受度高，适合同事一起吃。", "适合不想冒险、想吃干净一点。", "想吃重口或预算低时不优先。"),
@@ -1582,7 +1582,7 @@
       meal("锅贴小米粥", "🥟", 24, 16, ["hot", "nearby", "team"], [], ["balanced"], 4, 3, 0, "一干一稀，吃起来稳，适合胃口一般又想吃热的。", "适合和同事堂食、预算 30 元内。", "油煎类较多，少油偏好时不优先。"),
       meal("螺蛳粉", "🍜", 26, 18, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 4, 3, 4, "味道强、满足感高，适合非常想吃重口的时候。", "适合不赶时间、今天想吃开心点。", "不吃辣、下午要见人或办公室气味敏感时不建议。", true),
       meal("虾仁沙拉碗", "🥗", 39, 14, ["fresh", "takeaway", "desk", "protein"], ["seafood"], ["light", "protein"], 3, 1, 0, "蛋白质够、油脂低，适合想清爽但不能只吃草。", "适合少油轻负担、下午要保持清醒。", "不吃海鲜或预算低时不适合。"),
-      meal("番茄鸡蛋盖饭", "🍳", 19, 10, ["hot", "rush", "nearby"], [], ["balanced"], 3, 2, 0, "便宜、快、口味温和，是很稳的低预算午餐。", "适合 20 元内、想吃热饭。", "蛋白质和饱腹感中等，特别饿时可加配菜。", true),
+      meal("番茄鸡蛋盖饭", "🍳", 19, 10, ["hot", "rush", "nearby"], [], ["balanced"], 3, 2, 0, "便宜、快、口味温和，是很稳的低预算选择。", "适合 20 元内、想吃热饭。", "蛋白质和饱腹感中等，特别饿时可加配菜。", true),
       meal("烤鸡轻食盒", "🍗", 36, 18, ["fresh", "takeaway", "protein"], [], ["light", "protein", "balanced"], 4, 2, 0, "比普通沙拉更顶饱，油脂控制也比较好。", "适合想低负担但不想饿。", "预算低或想吃热饭时不优先。"),
       meal("烧腊饭小份", "🍚", 34, 16, ["comfort", "hot", "nearby"], [], ["happy", "protein"], 5, 4, 0, "肉香明显、出餐快，适合想吃满足一点。", "适合不想清淡、需要快速回血。", "油脂偏高，少油偏好时不建议。"),
       meal("牛肉汉堡", "🍔", 38, 12, ["comfort", "rush", "desk", "protein"], ["beef"], ["happy", "protein"], 4, 4, 0, "速度快、满足感强，适合忙到不想坐下吃饭。", "适合工位解决、赶时间。", "不吃牛肉或少油偏好时不适合。"),
@@ -1813,7 +1813,7 @@
         <p>${escapeHTML(rejected.reason || "和当前条件不太合拍")}，所以暂时排在后面。</p>
       ` : "";
 
-      risk.textContent = `提醒：这里不会读取定位，也不会直接下单。你可以把它当成午餐方向建议，再去附近店铺或外卖平台确认。`;
+      risk.textContent = `提醒：这里不会读取定位，也不会直接下单。你可以把它当成用餐方向建议，再去附近店铺或外卖平台确认。`;
     }
 
     document.querySelectorAll(".form-group[data-group] .option").forEach((button) => {
