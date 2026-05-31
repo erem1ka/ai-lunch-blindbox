@@ -131,12 +131,6 @@
       font-weight: 680;
     }
 
-    .nav-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
     .button-dark,
     .button-light {
       min-height: 42px;
@@ -161,8 +155,6 @@
       background: #fff;
       color: var(--ink);
     }
-
-    .nav-actions .button-light { display: none; }
 
     .button-dark:hover,
     .button-light:hover { transform: translateY(-1px); box-shadow: var(--micro-shadow); }
@@ -1128,7 +1120,7 @@
       }
 
       .nav { padding: 18px 20px; }
-      .nav-links, .nav-actions .button-light { display: none; }
+      .nav-links { display: none; }
       .hero, .section { padding: 54px 20px; }
       h1 { font-size: 42px; }
       #tool .section-head h1 {
@@ -1172,10 +1164,6 @@
         <a href="#scenes">适用场景</a>
         <a href="#why">推荐亮点</a>
         <a href="#portal">说明入口</a>
-      </div>
-      <div class="nav-actions">
-        <a class="button-light" href="#scenes">看看适不适合你</a>
-        <a class="button-dark" href="#tool">开始选择</a>
       </div>
     </nav>
 
