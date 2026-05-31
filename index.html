@@ -547,16 +547,67 @@
     }
 
     .recommend-top strong { font-size: 15px; }
-    .recommend-top button {
+
+    .recommend-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .recommend-actions button,
+    .feedback-actions button,
+    .memory-bar button {
       min-height: 36px;
       border: 0;
       border-radius: 999px;
-      background: var(--tomato);
-      color: #fff;
       cursor: pointer;
       padding: 0 14px;
       font-weight: 800;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease);
+    }
+
+    .recommend-actions button:first-child,
+    .feedback-actions button.primary {
+      background: var(--tomato);
+      color: #fff;
       box-shadow: 0 12px 22px rgba(233, 75, 53, .16);
+    }
+
+    .recommend-actions button.secondary,
+    .feedback-actions button,
+    .memory-bar button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #4b535c;
+    }
+
+    .recommend-actions button:hover,
+    .feedback-actions button:hover,
+    .memory-bar button:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--micro-shadow);
+    }
+
+    .no-repeat-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      padding: 0 12px;
+      color: #59616b;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .no-repeat-toggle input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--tomato);
     }
 
     .recommend-body { padding: 24px; display: grid; gap: 16px; }
@@ -596,6 +647,38 @@
       box-shadow: inset 0 0 0 8px rgba(63, 143, 90, .08);
     }
 
+    .meal-tags,
+    .meal-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .meal-tags span,
+    .meal-stats span {
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: var(--leaf-soft);
+      color: #3d7551;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .meal-stats span {
+      background: var(--yolk-soft);
+      color: #776139;
+    }
+
+    .feedback-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     .reason-grid,
     .alt-grid {
       display: grid;
@@ -625,6 +708,57 @@
       font-size: 13px;
       line-height: 1.55;
     }
+
+    .alt-card {
+      cursor: pointer;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), border-color 180ms var(--ease);
+    }
+
+    .alt-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(63, 143, 90, .26);
+      box-shadow: var(--micro-shadow);
+    }
+
+    .alt-card small {
+      display: inline-flex;
+      margin-top: 8px;
+      color: var(--tomato);
+      font-weight: 820;
+    }
+
+    .blocked-card,
+    .memory-bar {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fffdf8;
+      padding: 16px;
+    }
+
+    .blocked-card strong,
+    .memory-bar strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .blocked-card p,
+    .memory-bar p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .memory-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: var(--leaf-soft);
+      border-color: rgba(63, 143, 90, .16);
+    }
+
+    .memory-bar p { margin: 0; }
 
     .risk-note {
       border-left: 3px solid var(--tomato);
@@ -718,7 +852,7 @@
       .alt-grid,
       .metrics-layout,
       .iteration-grid { grid-template-columns: 1fr; }
-      .meal-header, .panel-top, .recommend-top { flex-direction: column; align-items: flex-start; }
+      .meal-header, .panel-top, .recommend-top, .memory-bar { flex-direction: column; align-items: flex-start; }
       .match-score { width: 64px; height: 64px; }
       footer { padding: 26px 20px; flex-direction: column; }
     }
@@ -787,9 +921,9 @@
                 <h2>番茄牛肉粉</h2>
                 <p>热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。</p>
                 <div class="score-grid">
-                  <div class="score-card"><strong>92</strong>匹配分</div>
+                  <div class="score-card"><strong>48</strong>午餐选项</div>
                   <div class="score-card"><strong>18min</strong>预计用时</div>
-                  <div class="score-card"><strong>2</strong>替代项</div>
+                  <div class="score-card"><strong>3</strong>今日建议</div>
                 </div>
               </div>
             </div>
@@ -965,15 +1099,29 @@
           <section class="recommend-panel" aria-live="polite">
             <div class="recommend-top">
               <strong>今日推荐</strong>
-              <button type="button" id="shuffleButton">换一换</button>
+              <div class="recommend-actions">
+                <label class="no-repeat-toggle">
+                  <input type="checkbox" id="noRepeatToggle" checked>
+                  本周不重复
+                </label>
+                <button type="button" id="shuffleButton">换一换</button>
+                <button class="secondary" type="button" id="resetMemoryButton">清空偏好</button>
+              </div>
             </div>
             <div class="recommend-body">
               <div class="empty-state" id="emptyState">
                 暂时没有完全匹配的午餐。可以放宽预算、取消部分忌口，或者把就餐方式改成“等外卖”。
               </div>
               <article class="main-meal" id="mainMeal"></article>
+              <div class="feedback-actions" id="feedbackActions">
+                <button class="primary" type="button" data-feedback="accept">就吃这个</button>
+                <button type="button" data-feedback="skip">今天不想吃</button>
+                <button type="button" data-feedback="ban">本周别再推荐</button>
+              </div>
+              <div class="memory-bar" id="memoryBar"></div>
               <div class="reason-grid" id="reasonGrid"></div>
               <div class="alt-grid" id="altGrid"></div>
+              <div class="blocked-card" id="blockedCard"></div>
               <div class="risk-note" id="riskNote"></div>
             </div>
           </section>
@@ -1003,9 +1151,9 @@
             <p>当前只根据你手动选择的条件推荐，不访问定位和账号信息。</p>
           </article>
           <article class="metric-card">
-            <small>是真实餐厅吗</small>
-            <strong>不是</strong>
-            <p>这里先提供午餐类型建议，你可以再去附近店铺或外卖平台下单。</p>
+            <small>推荐够多吗</small>
+            <strong>48</strong>
+            <p>内置多类午餐选项，会按你的条件挑出首推和备选。</p>
           </article>
           <article class="metric-card">
             <small>能处理忌口吗</small>
@@ -1034,6 +1182,14 @@
 
   <script>
     const budgetLimit = { low: 20, mid: 30, high: 45, flex: 999 };
+    const storageKey = "lunchBlindboxPreferenceV2";
+    const storage = (() => {
+      try {
+        return window.localStorage || null;
+      } catch {
+        return null;
+      }
+    })();
     const labels = {
       budget: { low: "20 元内", mid: "30 元内", high: "45 元内", flex: "今天放开" },
       time: { rush: "15 分钟", normal: "30 分钟", slow: "慢慢吃", delivery: "等外卖" },
@@ -1042,104 +1198,59 @@
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" }
     };
 
+    function meal(name, emoji, price, time, tags, avoid, health, satiety, oil, spicy, reason, fit, caution, vegetarian = false) {
+      return { name, emoji, price, time, tags, avoid, health, satiety, oil, spicy, reason, fit, caution, vegetarian };
+    }
+
     const meals = [
-      {
-        name: "番茄牛肉粉",
-        emoji: "🍜",
-        price: 28,
-        time: 18,
-        tags: ["hot", "comfort", "nearby", "protein"],
-        avoid: ["beef"],
-        health: ["balanced", "protein"],
-        reason: "热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。",
-        fit: "适合想吃热乎、午休时间一般、下午还要继续工作的日子。",
-        caution: "不吃牛肉或想少汤水时不适合。"
-      },
-      {
-        name: "麻辣烫轻菜版",
-        emoji: "🥘",
-        price: 25,
-        time: 24,
-        tags: ["spicy", "hot", "nearby", "team"],
-        avoid: ["spicy"],
-        health: ["balanced", "happy"],
-        reason: "口味满足感强，配菜自由度高，可以通过少放丸子和少油来控制负担。",
-        fit: "适合想吃辣、又希望自己控制菜量和主食的人。",
-        caution: "不吃辣、赶时间或下午要开长会时不建议。"
-      },
-      {
-        name: "鸡胸轻食碗",
-        emoji: "🥗",
-        price: 32,
-        time: 20,
-        tags: ["fresh", "takeaway", "desk", "protein"],
-        avoid: [],
-        health: ["light", "protein", "balanced"],
-        reason: "蛋白质稳定，油脂较低，适合想减少午后困意的工作日。",
-        fit: "适合轻负担、工位解决、下午需要保持清醒的场景。",
-        caution: "预算 20 元内或今天想吃安慰餐时满足感可能不足。"
-      },
-      {
-        name: "照烧鸡腿饭",
-        emoji: "🍱",
-        price: 29,
-        time: 16,
-        tags: ["hot", "comfort", "nearby", "takeaway", "protein"],
-        avoid: [],
-        health: ["balanced", "protein", "happy"],
-        reason: "主食、肉和配菜都有，出餐稳定，适合不想冒险的午餐选择。",
-        fit: "适合预算 30 元内、想快速吃饱、对口味没有强刺激想法的人。",
-        caution: "酱汁偏甜，少油偏好强时可以换轻食或便利店组合。"
-      },
-      {
-        name: "便利店饭团酸奶组合",
-        emoji: "🍙",
-        price: 19,
-        time: 6,
-        tags: ["fresh", "desk", "rush"],
-        avoid: [],
-        health: ["light", "balanced"],
-        reason: "最快、最稳、预算低，适合会议前后没有完整午休的情况。",
-        fit: "适合 15 分钟内解决、预算敏感、只想不饿的日子。",
-        caution: "饱腹感有限，下午容易饿时建议加鸡蛋或水果。"
-      },
-      {
-        name: "港式茶餐厅双拼饭",
-        emoji: "🍛",
-        price: 42,
-        time: 32,
-        tags: ["comfort", "team", "nearby", "hot"],
-        avoid: [],
-        health: ["happy"],
-        reason: "适合和同事一起吃，菜品接受度高，社交成本低。",
-        fit: "适合不赶时间、需要团队统一意见、今天想吃满足一点。",
-        caution: "预算 30 元内或少油偏好强时不优先。"
-      },
-      {
-        name: "日料饭团便当",
-        emoji: "🍣",
-        price: 36,
-        time: 26,
-        tags: ["fresh", "takeaway", "desk", "comfort"],
-        avoid: ["seafood"],
-        health: ["balanced", "light"],
-        reason: "口味清爽，适合不想吃重油重辣但又想有一点仪式感。",
-        fit: "适合外卖、工位吃、清爽口味或下午有拍照/见人安排。",
-        caution: "不吃海鲜或预算较紧时不建议。"
-      },
-      {
-        name: "素食拌饭",
-        emoji: "🥬",
-        price: 24,
-        time: 18,
-        tags: ["fresh", "nearby", "desk"],
-        avoid: [],
-        vegetarian: true,
-        health: ["light", "balanced"],
-        reason: "蔬菜占比高、预算可控，适合想清爽一点又不想只吃沙拉。",
-        fit: "适合素食优先、少油轻负担、预算 30 元内的场景。",
-        caution: "想补蛋白或重口味时满足感可能不足。"
-      }
+      meal("番茄牛肉粉", "🍜", 28, 18, ["hot", "comfort", "nearby", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0, "热乎、出餐快、预算友好；比重油炒菜更稳，比沙拉更有饱腹感。", "适合想吃热乎、午休时间一般、下午还要继续工作的日子。", "不吃牛肉或想少汤水时不适合。"),
+      meal("麻辣烫轻菜版", "🥘", 25, 24, ["spicy", "hot", "nearby", "team"], ["spicy"], ["balanced", "happy"], 4, 3, 3, "口味满足感强，配菜自由度高，可以通过少放丸子和少油来控制负担。", "适合想吃辣、又希望自己控制菜量和主食的人。", "不吃辣、赶时间或下午要开长会时不建议。"),
+      meal("鸡胸轻食碗", "🥗", 32, 20, ["fresh", "takeaway", "desk", "protein"], [], ["light", "protein", "balanced"], 3, 1, 0, "蛋白质稳定，油脂较低，适合想减少午后困意的工作日。", "适合轻负担、工位解决、下午需要保持清醒的场景。", "预算 20 元内或今天想吃安慰餐时满足感可能不足。"),
+      meal("照烧鸡腿饭", "🍱", 29, 16, ["hot", "comfort", "nearby", "takeaway", "protein"], [], ["balanced", "protein", "happy"], 5, 3, 0, "主食、肉和配菜都有，出餐稳定，适合不想冒险的午餐选择。", "适合预算 30 元内、想快速吃饱、对口味没有强刺激想法的人。", "酱汁偏甜，少油偏好强时可以换轻食或便利店组合。"),
+      meal("便利店饭团酸奶组合", "🍙", 19, 6, ["fresh", "desk", "rush"], [], ["light", "balanced"], 2, 1, 0, "最快、最稳、预算低，适合会议前后没有完整午休的情况。", "适合 15 分钟内解决、预算敏感、只想不饿的日子。", "饱腹感有限，下午容易饿时建议加鸡蛋或水果。"),
+      meal("港式茶餐厅双拼饭", "🍛", 42, 32, ["comfort", "team", "nearby", "hot"], [], ["happy"], 5, 4, 0, "菜品接受度高，适合和同事一起吃，今天不想继续纠结时很稳。", "适合不赶时间、需要大家都能接受、想吃满足一点。", "预算 30 元内或少油偏好强时不优先。"),
+      meal("日料饭团便当", "🍣", 36, 26, ["fresh", "takeaway", "desk", "comfort"], ["seafood"], ["balanced", "light"], 3, 1, 0, "口味清爽，适合不想吃重油重辣但又想有一点仪式感。", "适合外卖、工位吃、清爽口味或下午有拍照/见人安排。", "不吃海鲜或预算较紧时不建议。"),
+      meal("素食拌饭", "🥬", 24, 18, ["fresh", "nearby", "desk"], [], ["light", "balanced"], 3, 1, 0, "蔬菜占比高、预算可控，适合想清爽一点又不想只吃沙拉。", "适合素食优先、少油轻负担、预算 30 元内的场景。", "想补蛋白或重口味时满足感可能不足。", true),
+      meal("兰州牛肉面", "🍜", 22, 14, ["hot", "nearby", "rush", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0, "出餐快、热汤暖胃，价格也比较稳定。", "适合赶时间但想吃热乎主食。", "不吃牛肉或想少汤水时不合适。"),
+      meal("沙县鸡腿饭", "🍗", 23, 12, ["hot", "nearby", "rush", "protein"], [], ["balanced", "protein"], 4, 3, 0, "便宜、快、饱腹感强，适合不想动脑的工作日。", "适合预算有限、需要快点吃完。", "口味惊喜少，少油偏好强时不优先。"),
+      meal("黄焖鸡米饭", "🍲", 27, 20, ["hot", "comfort", "nearby", "protein"], [], ["balanced", "happy"], 5, 4, 1, "热菜热饭、饱腹感强，适合想吃正餐的中午。", "适合今天想吃热乎、有完整午休。", "油脂和酱汁偏重，下午容易困的人慎选。"),
+      meal("石锅拌饭", "🍚", 34, 24, ["hot", "comfort", "team"], [], ["balanced", "happy"], 4, 3, 1, "主食、蔬菜和蛋白都有，口味比普通盖饭更有变化。", "适合和同事堂食，想吃热乎但不想太辣。", "赶时间或预算 30 元内时不优先。"),
+      meal("泡菜豆腐锅", "🍲", 31, 26, ["spicy", "hot", "nearby"], ["spicy"], ["balanced", "light"], 3, 2, 3, "汤锅类更暖，豆腐和蔬菜比例高，负担比炸物低。", "适合想吃辣、又不想太油的午餐。", "不吃辣或下午怕出汗时不建议。", true),
+      meal("鲜虾云吞面", "🥟", 33, 18, ["hot", "fresh", "nearby"], ["seafood"], ["balanced"], 3, 2, 0, "汤面清爽、出餐快，适合不想吃太重的热食。", "适合想热乎但不想油腻。", "不吃海鲜或想高蛋白时不优先。"),
+      meal("猪脚饭小份", "🍖", 32, 16, ["comfort", "hot", "nearby"], [], ["happy"], 5, 5, 0, "满足感强，适合真的饿、需要快速回血的时候。", "适合不想清淡、今天需要吃饱。", "油脂较高，下午要保持清醒时不优先。"),
+      meal("肉夹馍凉皮组合", "🥙", 24, 13, ["fresh", "rush", "desk"], [], ["balanced", "happy"], 4, 3, 1, "一热一凉，速度快，价格也比较稳。", "适合预算有限、想换换口味。", "不适合严格少油或不想吃面食的人。"),
+      meal("酸汤肥牛饭", "🍛", 35, 22, ["spicy", "hot", "takeaway", "protein"], ["spicy", "beef"], ["protein", "happy"], 5, 3, 3, "酸辣开胃，蛋白质足，适合没胃口但想吃正餐。", "适合想吃辣、预算稍微放开。", "不吃辣或不吃牛肉时不适合。"),
+      meal("牛油果鸡蛋三明治", "🥪", 26, 8, ["fresh", "desk", "rush"], [], ["light", "balanced"], 2, 1, 0, "轻便、快取、不会太撑，适合会议前的午餐。", "适合工位解决、少油轻负担。", "饱腹感偏弱，特别饿时建议加酸奶。", true),
+      meal("咖啡店鸡肉卷", "🌯", 34, 10, ["fresh", "desk", "takeaway", "protein"], [], ["balanced", "protein"], 3, 2, 0, "拿取快、吃起来干净，不太影响下午状态。", "适合边工作边吃、想补蛋白。", "价格比便利店组合高，预算低时不优先。"),
+      meal("皮蛋瘦肉粥", "🥣", 21, 12, ["hot", "rush", "nearby"], [], ["light", "balanced"], 2, 1, 0, "热乎、轻负担，适合胃口一般或不想吃太硬的午餐。", "适合赶时间、想吃热的但不想油。", "饱腹感一般，体力消耗大时不够顶。"),
+      meal("南瓜小米粥素包", "🥣", 18, 10, ["hot", "rush", "desk"], [], ["light"], 2, 1, 0, "温和、便宜、速度快，适合胃不舒服或想清淡一点。", "适合少油轻负担、预算 20 元内。", "蛋白质不足，下午容易饿。", true),
+      meal("白菜猪肉饺子", "🥟", 26, 18, ["hot", "nearby", "team"], [], ["balanced"], 4, 2, 0, "热乎、份量稳定，适合不知道吃什么时兜底。", "适合和同事一起吃，选择成本低。", "不想吃面食或想清爽时不优先。"),
+      meal("云南过桥米线", "🍜", 29, 20, ["hot", "comfort", "nearby"], [], ["balanced"], 4, 2, 1, "汤底热、配料多，适合想吃有层次的粉面。", "适合预算 30 元内、想吃热乎。", "赶时间时可能稍慢。"),
+      meal("重庆小面", "🍜", 18, 10, ["spicy", "hot", "rush"], ["spicy"], ["happy"], 3, 3, 4, "便宜、快、味道直接，适合想吃辣的午餐。", "适合预算低、赶时间、需要提神。", "不吃辣或下午要见人时不建议。", true),
+      meal("越南牛肉粉", "🍜", 38, 22, ["fresh", "hot", "takeaway"], ["beef"], ["balanced", "protein"], 3, 1, 0, "清爽汤粉，热乎但不重油，适合想换口味。", "适合不想吃中式盖饭、预算稍宽。", "不吃牛肉或赶时间时不优先。"),
+      meal("泰式打抛鸡饭", "🍛", 36, 24, ["spicy", "comfort", "takeaway", "protein"], ["spicy"], ["protein", "happy"], 4, 3, 3, "香气足、蛋白够，适合想吃有味道的饭。", "适合想吃辣、外卖场景。", "不吃辣或想清淡时不适合。"),
+      meal("海南鸡饭", "🍗", 34, 22, ["fresh", "team", "nearby", "protein"], [], ["balanced", "protein"], 4, 2, 0, "口味温和、接受度高，适合同事一起吃。", "适合不想冒险、想吃干净一点。", "想吃重口或预算低时不优先。"),
+      meal("香辣烤鱼饭", "🐟", 39, 28, ["spicy", "hot", "team"], ["spicy", "seafood"], ["happy", "protein"], 5, 4, 4, "重口满足感强，适合想吃一顿开心的。", "适合不赶时间、想和同事一起吃。", "不吃辣、不吃海鲜或少油偏好时不适合。"),
+      meal("章鱼小丸子便当", "🍱", 31, 18, ["comfort", "desk", "takeaway"], ["seafood"], ["happy"], 3, 3, 0, "有零食感和仪式感，适合不想吃传统正餐。", "适合工位吃、想轻松一点。", "不吃海鲜或需要高饱腹时不优先。"),
+      meal("烤冷面加蛋", "🥚", 17, 8, ["comfort", "rush", "desk"], [], ["happy"], 3, 3, 1, "便宜、快、有满足感，适合预算很紧的中午。", "适合赶时间、想吃点有味道的。", "营养结构不完整，不能长期连续吃。", true),
+      meal("鸡腿汉堡套餐", "🍔", 29, 12, ["comfort", "rush", "desk"], [], ["happy", "protein"], 4, 4, 0, "快、稳定、满足感强，不需要等太久。", "适合赶时间、想吃安慰餐。", "油脂偏高，少油轻负担时不优先。"),
+      meal("墨西哥鸡肉卷", "🌯", 37, 16, ["fresh", "takeaway", "protein"], [], ["balanced", "protein"], 4, 2, 1, "蔬菜和鸡肉比例不错，口味比轻食更有满足感。", "适合外卖、想补蛋白但不想吃饭。", "预算 30 元内时不优先。"),
+      meal("番茄鸡肉意面", "🍝", 35, 25, ["comfort", "takeaway", "protein"], [], ["balanced", "protein"], 4, 2, 0, "酸甜口稳定，饱腹感不错，比奶油意面负担低。", "适合想吃西式简餐、下午不赶。", "赶时间或低预算时不优先。"),
+      meal("寿司便当", "🍣", 39, 15, ["fresh", "desk", "takeaway"], ["seafood"], ["light", "balanced"], 3, 1, 0, "干净、方便、速度快，适合工位吃。", "适合清爽口味、下午有安排。", "不吃海鲜或特别饿时不建议。"),
+      meal("关东煮便利店组合", "🍢", 22, 7, ["hot", "rush", "desk"], [], ["balanced"], 3, 2, 0, "热乎又快，适合没有完整午休但想吃点温的。", "适合 15 分钟内解决、预算不高。", "钠含量可能偏高，少盐偏好时不优先。"),
+      meal("豆腐蔬菜锅", "🍲", 28, 20, ["hot", "nearby", "fresh"], [], ["light", "balanced"], 3, 1, 0, "热乎、蔬菜多，适合想清淡又不想吃冷食。", "适合素食优先、少油轻负担。", "想吃高蛋白或重口时满足感不足。", true),
+      meal("蔬菜咖喱饭", "🍛", 27, 18, ["comfort", "hot", "nearby"], [], ["balanced", "happy"], 4, 2, 1, "温和有味道，蔬菜和主食都有，价格也稳。", "适合想吃安慰餐但不想太贵。", "不想吃米饭或怕咖喱味留香时不优先。", true),
+      meal("葱油拌面加蛋", "🍜", 18, 9, ["comfort", "rush", "desk"], [], ["happy"], 3, 3, 0, "便宜、快、香气足，适合只想快速吃饱。", "适合预算低、赶时间。", "蔬菜较少，少油轻负担时不优先。", true),
+      meal("炸酱面", "🍜", 24, 14, ["comfort", "nearby", "rush"], [], ["happy"], 4, 3, 0, "价格稳定、饱腹感强，适合不想踩雷。", "适合预算 30 元内、想吃面。", "口味偏咸，清爽偏好时不优先。"),
+      meal("锅贴小米粥", "🥟", 24, 16, ["hot", "nearby", "team"], [], ["balanced"], 4, 3, 0, "一干一稀，吃起来稳，适合胃口一般又想吃热的。", "适合和同事堂食、预算 30 元内。", "油煎类较多，少油偏好时不优先。"),
+      meal("螺蛳粉", "🍜", 26, 18, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 4, 3, 4, "味道强、满足感高，适合非常想吃重口的时候。", "适合不赶时间、今天想吃开心点。", "不吃辣、下午要见人或办公室气味敏感时不建议。", true),
+      meal("虾仁沙拉碗", "🥗", 39, 14, ["fresh", "takeaway", "desk", "protein"], ["seafood"], ["light", "protein"], 3, 1, 0, "蛋白质够、油脂低，适合想清爽但不能只吃草。", "适合少油轻负担、下午要保持清醒。", "不吃海鲜或预算低时不适合。"),
+      meal("番茄鸡蛋盖饭", "🍳", 19, 10, ["hot", "rush", "nearby"], [], ["balanced"], 3, 2, 0, "便宜、快、口味温和，是很稳的低预算午餐。", "适合 20 元内、想吃热饭。", "蛋白质和饱腹感中等，特别饿时可加配菜。", true),
+      meal("烤鸡轻食盒", "🍗", 36, 18, ["fresh", "takeaway", "protein"], [], ["light", "protein", "balanced"], 4, 2, 0, "比普通沙拉更顶饱，油脂控制也比较好。", "适合想低负担但不想饿。", "预算低或想吃热饭时不优先。"),
+      meal("烧腊饭小份", "🍚", 34, 16, ["comfort", "hot", "nearby"], [], ["happy", "protein"], 5, 4, 0, "肉香明显、出餐快，适合想吃满足一点。", "适合不想清淡、需要快速回血。", "油脂偏高，少油偏好时不建议。"),
+      meal("牛肉汉堡", "🍔", 38, 12, ["comfort", "rush", "desk", "protein"], ["beef"], ["happy", "protein"], 4, 4, 0, "速度快、满足感强，适合忙到不想坐下吃饭。", "适合工位解决、赶时间。", "不吃牛肉或少油偏好时不适合。"),
+      meal("菌菇汤饭", "🍄", 25, 17, ["hot", "fresh", "nearby"], [], ["light", "balanced"], 3, 1, 0, "汤饭温和，菌菇香气够，负担比重油盖饭低。", "适合想热乎、少油、预算 30 元内。", "想吃重口或高蛋白时不够满足。", true),
+      meal("手作火腿三明治", "🥪", 24, 8, ["fresh", "desk", "rush"], [], ["balanced"], 2, 2, 0, "拿取快、不会太撑，适合临时补一餐。", "适合会议间隙、工位解决。", "饱腹感偏弱，建议搭配牛奶或水果。")
     ];
 
     const state = {
@@ -1149,8 +1260,11 @@
       mode: "nearby",
       health: "balanced",
       avoid: new Set(),
+      noRepeat: true,
       offset: 0
     };
+
+    const preference = loadPreference();
 
     function escapeHTML(value) {
       return String(value).replace(/[&<>"']/g, (char) => ({
@@ -1162,39 +1276,100 @@
       }[char]));
     }
 
+    function weekKey(date = new Date()) {
+      const yearStart = new Date(date.getFullYear(), 0, 1);
+      const day = Math.floor((date - yearStart) / 86400000);
+      return `${date.getFullYear()}-${Math.ceil((day + yearStart.getDay() + 1) / 7)}`;
+    }
+
+    function loadPreference() {
+      const fallback = { week: weekKey(), accepted: [], skipped: [], blocked: [] };
+      try {
+        const saved = JSON.parse((storage && storage.getItem(storageKey)) || "null");
+        if (!saved || saved.week !== fallback.week) return fallback;
+        return {
+          week: fallback.week,
+          accepted: Array.isArray(saved.accepted) ? saved.accepted : [],
+          skipped: Array.isArray(saved.skipped) ? saved.skipped : [],
+          blocked: Array.isArray(saved.blocked) ? saved.blocked : []
+        };
+      } catch {
+        return fallback;
+      }
+    }
+
+    function savePreference() {
+      if (storage) storage.setItem(storageKey, JSON.stringify(preference));
+    }
+
+    function remember(listName, mealName) {
+      if (!preference[listName].includes(mealName)) preference[listName].push(mealName);
+      preference[listName] = preference[listName].slice(-18);
+      savePreference();
+    }
+
     function conflicts(meal) {
       if (meal.price > budgetLimit[state.budget]) return true;
       if (state.avoid.has("meat") && !meal.vegetarian) return true;
       return [...state.avoid].some((item) => meal.avoid.includes(item));
     }
 
+    function conflictReason(meal) {
+      if (meal.price > budgetLimit[state.budget]) return `约 ${meal.price} 元，超过当前预算`;
+      if (state.avoid.has("meat") && !meal.vegetarian) return "你选择了素食优先";
+      if (state.avoid.has("spicy") && meal.avoid.includes("spicy")) return "你选择了不吃辣";
+      if (state.avoid.has("beef") && meal.avoid.includes("beef")) return "你选择了不吃牛肉";
+      if (state.avoid.has("seafood") && meal.avoid.includes("seafood")) return "你选择了不吃海鲜";
+      return "和当前条件不太合拍";
+    }
+
     function scoreMeal(meal) {
-      let score = 50;
-      if (meal.tags.includes(state.taste)) score += 18;
+      let score = 46;
+      if (meal.tags.includes(state.taste)) score += 20;
       if (meal.tags.includes(state.mode)) score += 14;
       if (meal.health.includes(state.health)) score += 16;
-      if (state.time === "rush" && meal.time <= 15) score += 18;
+      if (state.health === "light" && meal.oil <= 2) score += 10;
+      if (state.health === "protein" && meal.health.includes("protein")) score += 10;
+      if (state.time === "rush" && meal.time <= 15) score += 22;
       if (state.time === "normal" && meal.time <= 30) score += 12;
-      if (state.time === "slow" && meal.time > 25) score += 8;
+      if (state.time === "slow" && meal.time > 25) score += 9;
       if (state.time === "delivery" && meal.tags.includes("takeaway")) score += 15;
       if (state.budget === "low" && meal.price <= 20) score += 12;
       if (state.budget === "mid" && meal.price <= 30) score += 8;
+      if (state.budget === "high" && meal.price > 30 && meal.price <= 45) score += 6;
       if (state.health === "happy" && meal.tags.includes("comfort")) score += 14;
+      if (state.taste === "spicy" && meal.spicy >= 3) score += 8;
+      if (state.taste === "fresh" && meal.oil <= 2) score += 8;
+      if (state.mode === "team" && meal.tags.includes("team")) score += 10;
+      if (preference.accepted.includes(meal.name)) score += 5;
+      if (preference.skipped.includes(meal.name)) score -= 12;
+      if (state.noRepeat && preference.blocked.includes(meal.name)) score -= 70;
+      if (state.noRepeat && preference.accepted.includes(meal.name)) score -= 18;
       return Math.min(99, score);
     }
 
     function rankedMeals() {
-      return meals
+      const list = meals
         .filter((meal) => !conflicts(meal))
         .map((meal) => ({ ...meal, score: scoreMeal(meal) }))
         .sort((a, b) => b.score - a.score || a.price - b.price);
+      return list.filter((meal) => meal.score > 0);
+    }
+
+    function rejectedMeal() {
+      const rejected = meals.find((meal) => conflicts(meal));
+      if (rejected) return { ...rejected, reason: conflictReason(rejected) };
+      const lowest = meals
+        .map((meal) => ({ ...meal, score: scoreMeal(meal) }))
+        .sort((a, b) => a.score - b.score)[0];
+      return { ...lowest, reason: "和当前条件不太合拍" };
     }
 
     function reasonCards(meal) {
       return [
         { title: "为什么是它", text: meal.reason },
-        { title: "适合今天", text: `${labels.budget[state.budget]}、${labels.time[state.time]}、${labels.taste[state.taste]}，匹配当前午餐约束。` },
-        { title: "预计成本", text: `约 ${meal.price} 元，预计 ${meal.time} 分钟完成点餐和用餐。` },
+        { title: "适合今天", text: `${labels.budget[state.budget]}、${labels.time[state.time]}、${labels.taste[state.taste]}，比较贴近你现在的选择。` },
+        { title: "口感预期", text: `饱腹感 ${meal.satiety}/5，油腻度 ${meal.oil}/5，辣度 ${meal.spicy}/5。` },
         { title: "不适合情况", text: meal.caution }
       ];
     }
@@ -1213,6 +1388,7 @@
         button.classList.toggle("active", active);
         button.setAttribute("aria-pressed", active ? "true" : "false");
       });
+      document.getElementById("noRepeatToggle").checked = state.noRepeat;
     }
 
     function render() {
@@ -1222,22 +1398,31 @@
       const main = document.getElementById("mainMeal");
       const reasonGrid = document.getElementById("reasonGrid");
       const altGrid = document.getElementById("altGrid");
+      const blockedCard = document.getElementById("blockedCard");
+      const memoryBar = document.getElementById("memoryBar");
+      const feedbackActions = document.getElementById("feedbackActions");
       const risk = document.getElementById("riskNote");
 
       if (!list.length) {
         empty.style.display = "block";
         main.style.display = "none";
+        feedbackActions.style.display = "none";
+        memoryBar.style.display = "none";
         reasonGrid.innerHTML = "";
         altGrid.innerHTML = "";
-        risk.textContent = "系统没有强行推荐，是因为当前条件存在硬冲突。放宽一个条件会比随机推荐更可靠。";
+        blockedCard.innerHTML = "";
+        risk.textContent = "当前条件太严格了。可以提高预算、取消部分忌口，或者把就餐方式改成等外卖。";
         return;
       }
 
       empty.style.display = "none";
       main.style.display = "block";
+      feedbackActions.style.display = "flex";
+      memoryBar.style.display = "flex";
       const index = state.offset % list.length;
       const meal = list[index];
       const alternatives = list.filter((_, i) => i !== index).slice(0, 2);
+      const rejected = rejectedMeal();
       main.innerHTML = `
         <div class="meal-header">
           <div class="meal-title">
@@ -1250,6 +1435,25 @@
           <div class="match-score">${escapeHTML(meal.score)}</div>
         </div>
         <p>${escapeHTML(meal.reason)}</p>
+        <div class="meal-tags">
+          ${meal.health.map((item) => `<span>${escapeHTML(labels.health[item] || item)}</span>`).join("")}
+          ${meal.tags.slice(0, 3).map((item) => `<span>${escapeHTML(labels.taste[item] || labels.mode[item] || item)}</span>`).join("")}
+        </div>
+        <div class="meal-stats">
+          <span>饱腹 ${escapeHTML(meal.satiety)}/5</span>
+          <span>油腻 ${escapeHTML(meal.oil)}/5</span>
+          <span>辣度 ${escapeHTML(meal.spicy)}/5</span>
+        </div>
+      `;
+
+      feedbackActions.dataset.currentMeal = meal.name;
+
+      memoryBar.innerHTML = `
+        <div>
+          <strong>本周偏好</strong>
+          <p>已采纳 ${escapeHTML(preference.accepted.length)} 个，暂不推荐 ${escapeHTML(preference.blocked.length)} 个。偏好只保存在你的浏览器里。</p>
+        </div>
+        <button type="button" id="memoryShuffleButton">按偏好再换</button>
       `;
 
       reasonGrid.innerHTML = reasonCards(meal).map((item) => `
@@ -1260,11 +1464,17 @@
       `).join("");
 
       altGrid.innerHTML = alternatives.map((item) => `
-        <article class="alt-card">
+        <article class="alt-card" data-meal-name="${escapeHTML(item.name)}">
           <strong>${escapeHTML(item.emoji)} ${escapeHTML(item.name)}</strong>
           <p>${escapeHTML(item.price)} 元 · ${escapeHTML(item.time)} 分钟 · 匹配分 ${escapeHTML(item.score)}</p>
+          <small>选这个</small>
         </article>
       `).join("");
+
+      blockedCard.innerHTML = rejected ? `
+        <strong>今天先不推：${escapeHTML(rejected.emoji)} ${escapeHTML(rejected.name)}</strong>
+        <p>${escapeHTML(rejected.reason || "和当前条件不太合拍")}，所以暂时排在后面。</p>
+      ` : "";
 
       risk.textContent = `提醒：这里不会读取定位，也不会直接下单。你可以把它当成午餐方向建议，再去附近店铺或外卖平台确认。`;
     }
@@ -1289,6 +1499,50 @@
     });
 
     document.getElementById("shuffleButton").addEventListener("click", () => {
+      state.offset += 1;
+      render();
+    });
+
+    document.getElementById("noRepeatToggle").addEventListener("change", (event) => {
+      state.noRepeat = event.target.checked;
+      state.offset = 0;
+      render();
+    });
+
+    document.getElementById("resetMemoryButton").addEventListener("click", () => {
+      preference.accepted = [];
+      preference.skipped = [];
+      preference.blocked = [];
+      savePreference();
+      state.offset = 0;
+      render();
+    });
+
+    document.getElementById("feedbackActions").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-feedback]");
+      if (!button) return;
+      const currentMeal = event.currentTarget.dataset.currentMeal;
+      if (!currentMeal) return;
+      if (button.dataset.feedback === "accept") remember("accepted", currentMeal);
+      if (button.dataset.feedback === "skip") remember("skipped", currentMeal);
+      if (button.dataset.feedback === "ban") remember("blocked", currentMeal);
+      state.offset += 1;
+      render();
+    });
+
+    document.getElementById("altGrid").addEventListener("click", (event) => {
+      const card = event.target.closest("[data-meal-name]");
+      if (!card) return;
+      const list = rankedMeals();
+      const index = list.findIndex((meal) => meal.name === card.dataset.mealName);
+      if (index >= 0) {
+        state.offset = index;
+        render();
+      }
+    });
+
+    document.getElementById("memoryBar").addEventListener("click", (event) => {
+      if (!event.target.closest("#memoryShuffleButton")) return;
       state.offset += 1;
       render();
     });
