@@ -1512,22 +1512,31 @@
       }
     };
 
+    function priceRange(price) {
+      const spread = price <= 20 ? 4 : price <= 35 ? 6 : 8;
+      const min = Math.max(8, price - Math.ceil(spread / 2));
+      const max = price + Math.floor(spread / 2);
+      return { min, max, label: `${min}-${max} 元` };
+    }
+
     function meal(category, name, emoji, price, tags, avoid, health, satiety, oil, spicy, vegetarian = false) {
       const tasteText = tags.includes("spicy") ? "口味更直接" : tags.includes("fresh") ? "整体更清爽" : tags.includes("comfort") ? "满足感更强" : "口味比较稳";
       const healthText = health.includes("light") ? "负担相对轻" : health.includes("protein") ? "蛋白质更足" : health.includes("happy") ? "更适合想吃开心一点" : "搭配相对均衡";
+      const range = priceRange(price);
       const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 38 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
       return {
         category,
         name,
         emoji,
         price,
+        priceRange: range,
         tags,
         avoid,
         health,
         satiety,
         oil,
         spicy,
-        reason: `${category}里的常见选择，${tasteText}，${healthText}，价格约 ${price} 元。`,
+        reason: `${category}里的常见选择，${tasteText}，${healthText}，参考价 ${range.label}。`,
         fit: `适合当前预算、口味和健康偏好组合。`,
         caution,
         vegetarian
@@ -1565,7 +1574,7 @@
       meal("粉面米线", "日式豚骨拉面", "🍜", 39, ["hot", "comfort", "protein"], [], ["happy", "protein"], 4, 4, 0),
       meal("粉面米线", "刀削面", "🍜", 23, ["hot", "comfort"], [], ["balanced"], 4, 2, 0),
       meal("粉面米线", "凉皮肉夹馍组合", "🥙", 24, ["fresh", "rush", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
-      meal("粥汤馄饨", "皮蛋瘦肉粥", "🥣", 21, ["hot", "rush"], [], ["light", "balanced"], 2, 1, 0),
+      meal("粥汤馄饨", "皮蛋瘦肉粥", "🥣", 16, ["hot", "rush"], [], ["light", "balanced"], 2, 1, 0),
       meal("粥汤馄饨", "南瓜小米粥素包", "🥣", 18, ["hot", "rush"], [], ["light"], 2, 1, 0, true),
       meal("粥汤馄饨", "海鲜砂锅粥", "🥣", 42, ["hot", "fresh"], ["seafood"], ["balanced", "protein"], 3, 1, 0),
       meal("粥汤馄饨", "鸡丝粥", "🥣", 24, ["hot", "rush", "protein"], [], ["light", "protein"], 3, 1, 0),
@@ -1691,13 +1700,13 @@
     }
 
     function conflicts(meal) {
-      if (meal.price > budgetLimit[state.budget]) return true;
+      if (meal.priceRange.min > budgetLimit[state.budget]) return true;
       if (state.avoid.has("meat") && !meal.vegetarian) return true;
       return [...state.avoid].some((item) => meal.avoid.includes(item));
     }
 
     function conflictReason(meal) {
-      if (meal.price > budgetLimit[state.budget]) return `约 ${meal.price} 元，超过当前预算`;
+      if (meal.priceRange.min > budgetLimit[state.budget]) return `参考价 ${meal.priceRange.label}，超过当前预算`;
       if (state.avoid.has("meat") && !meal.vegetarian) return "你选择了素食优先";
       if (state.avoid.has("spicy") && meal.avoid.includes("spicy")) return "你选择了不吃辣";
       if (state.avoid.has("beef") && meal.avoid.includes("beef")) return "你选择了不吃牛肉";
@@ -1830,7 +1839,7 @@
             <span>${escapeHTML(meal.emoji)}</span>
             <div>
               <h3>${escapeHTML(meal.name)}</h3>
-              <small>${escapeHTML(meal.price)} 元左右 · ${escapeHTML(meal.category)} · 适合今天</small>
+              <small>参考价 ${escapeHTML(meal.priceRange.label)} · ${escapeHTML(meal.category)} · 适合今天</small>
             </div>
           </div>
           <div class="match-score">${escapeHTML(meal.score)}</div>
@@ -1868,7 +1877,7 @@
       altGrid.innerHTML = alternatives.map((item) => `
         <article class="alt-card" data-meal-name="${escapeHTML(item.name)}">
           <strong>${escapeHTML(item.emoji)} ${escapeHTML(item.name)}</strong>
-          <p>${escapeHTML(item.price)} 元 · ${escapeHTML(item.category)} · 匹配分 ${escapeHTML(item.score)}</p>
+          <p>参考价 ${escapeHTML(item.priceRange.label)} · ${escapeHTML(item.category)} · 匹配分 ${escapeHTML(item.score)}</p>
           <small>选这个</small>
         </article>
       `).join("");
