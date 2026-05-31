@@ -355,14 +355,15 @@
     }
 
     #tool .section-head {
-      max-width: 720px;
+      max-width: 820px;
       margin-bottom: 22px;
     }
 
     #tool .section-head h1 {
       margin: 14px 0 10px;
-      font-size: clamp(34px, 4.8vw, 56px);
-      line-height: 1.05;
+      font-size: 50px;
+      line-height: 1.08;
+      white-space: nowrap;
     }
 
     #tool .section-head p {
@@ -1130,6 +1131,11 @@
       .nav-links, .nav-actions .button-light { display: none; }
       .hero, .section { padding: 54px 20px; }
       h1 { font-size: 42px; }
+      #tool .section-head h1 {
+        font-size: 38px;
+        white-space: normal;
+        text-wrap: balance;
+      }
       .card-grid,
       .option-grid,
       .reason-grid,
@@ -1308,7 +1314,7 @@
       <section class="section" id="tool">
         <div class="section-head">
           <span class="eyebrow">Lunch Picker</span>
-          <h1>选几个条件，午餐自动开盲盒</h1>
+          <h1>选条件，午餐开盲盒</h1>
           <p>不用登录，不读取定位。选完条件后，右侧会实时给出今天的午餐建议。</p>
         </div>
         <div class="tool-stage">
