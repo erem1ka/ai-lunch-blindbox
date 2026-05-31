@@ -1523,10 +1523,21 @@
       }
     };
     const regionPrice = {
-      metro: 1.25,
-      capital: 1.12,
-      standard: 1,
-      campus: 0.86
+      metro: 1.12,
+      capital: 1,
+      standard: 0.88,
+      campus: 0.76
+    };
+    const categoryPrice = {
+      "盖饭快餐": 0.9,
+      "粉面米线": 0.86,
+      "粥汤馄饨": 0.85,
+      "麻辣烫冒菜": 0.9,
+      "轻食健康": 1,
+      "便利店小吃": 0.84,
+      "西式简餐": 0.95,
+      "日韩东南亚": 0.96,
+      "地方菜小碗菜": 0.9
     };
 
     function priceRange(price) {
@@ -1537,7 +1548,9 @@
     }
 
     function localPrice(meal) {
-      return Math.max(8, Math.round(meal.price * (regionPrice[state.region] || 1)));
+      const regionFactor = regionPrice[state.region] || 1;
+      const categoryFactor = categoryPrice[meal.category] || 1;
+      return Math.max(6, Math.round(meal.price * regionFactor * categoryFactor));
     }
 
     function localPriceRange(meal) {
