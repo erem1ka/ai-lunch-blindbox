@@ -1325,6 +1325,16 @@
                 </div>
               </div>
 
+              <div class="form-group" data-group="region">
+                <div class="group-label">地区价格 <span>本地参考</span></div>
+                <div class="option-grid">
+                  <button class="option" type="button" data-value="metro">一线核心区</button>
+                  <button class="option" type="button" data-value="capital">新一线/省会</button>
+                  <button class="option active" type="button" data-value="standard">普通城市</button>
+                  <button class="option" type="button" data-value="campus">校园低价区</button>
+                </div>
+              </div>
+
               <div class="form-group" data-group="taste">
                 <div class="group-label">口味 <span>主偏好</span></div>
                 <div class="option-grid">
@@ -1496,6 +1506,7 @@
     })();
     const labels = {
       budget: { low: "20 元内", mid: "30 元内", high: "45 元内", flex: "今天放开" },
+      region: { metro: "一线核心区", capital: "新一线/省会", standard: "普通城市", campus: "校园低价区" },
       taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "满足一点" },
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
       tag: {
@@ -1511,6 +1522,12 @@
         rush: "出餐快"
       }
     };
+    const regionPrice = {
+      metro: 1.25,
+      capital: 1.12,
+      standard: 1,
+      campus: 0.86
+    };
 
     function priceRange(price) {
       const spread = price <= 20 ? 4 : price <= 35 ? 6 : 8;
@@ -1519,24 +1536,31 @@
       return { min, max, label: `${min}-${max} 元` };
     }
 
+    function localPrice(meal) {
+      return Math.max(8, Math.round(meal.price * (regionPrice[state.region] || 1)));
+    }
+
+    function localPriceRange(meal) {
+      return priceRange(localPrice(meal));
+    }
+
     function meal(category, name, emoji, price, tags, avoid, health, satiety, oil, spicy, vegetarian = false) {
       const tasteText = tags.includes("spicy") ? "口味更直接" : tags.includes("fresh") ? "整体更清爽" : tags.includes("comfort") ? "满足感更强" : "口味比较稳";
       const healthText = health.includes("light") ? "负担相对轻" : health.includes("protein") ? "蛋白质更足" : health.includes("happy") ? "更适合想吃开心一点" : "搭配相对均衡";
-      const range = priceRange(price);
       const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 38 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
       return {
         category,
         name,
         emoji,
         price,
-        priceRange: range,
+        basePriceRange: priceRange(price),
         tags,
         avoid,
         health,
         satiety,
         oil,
         spicy,
-        reason: `${category}里的常见选择，${tasteText}，${healthText}，参考价 ${range.label}。`,
+        reason: `${category}里的常见选择，${tasteText}，${healthText}。`,
         fit: `适合当前预算、口味和健康偏好组合。`,
         caution,
         vegetarian
@@ -1648,6 +1672,7 @@
 
     const state = {
       budget: "mid",
+      region: "standard",
       taste: "hot",
       health: "balanced",
       avoid: new Set(),
@@ -1700,13 +1725,13 @@
     }
 
     function conflicts(meal) {
-      if (meal.priceRange.min > budgetLimit[state.budget]) return true;
+      if (localPriceRange(meal).min > budgetLimit[state.budget]) return true;
       if (state.avoid.has("meat") && !meal.vegetarian) return true;
       return [...state.avoid].some((item) => meal.avoid.includes(item));
     }
 
     function conflictReason(meal) {
-      if (meal.priceRange.min > budgetLimit[state.budget]) return `参考价 ${meal.priceRange.label}，超过当前预算`;
+      if (localPriceRange(meal).min > budgetLimit[state.budget]) return `本地参考价 ${localPriceRange(meal).label}，超过当前预算`;
       if (state.avoid.has("meat") && !meal.vegetarian) return "你选择了素食优先";
       if (state.avoid.has("spicy") && meal.avoid.includes("spicy")) return "你选择了不吃辣";
       if (state.avoid.has("beef") && meal.avoid.includes("beef")) return "你选择了不吃牛肉";
@@ -1716,24 +1741,25 @@
 
     function scoreMeal(meal) {
       let score = 46;
+      const price = localPrice(meal);
       if (meal.tags.includes(state.taste)) score += 20;
       if (meal.health.includes(state.health)) score += 16;
       if (state.health === "light" && meal.oil <= 2) score += 10;
       if (state.health === "protein" && meal.health.includes("protein")) score += 10;
       if (state.budget === "low") {
-        if (meal.price <= 20) score += 14;
-        if (meal.price > 28) score -= 10;
+        if (price <= 20) score += 14;
+        if (price > 28) score -= 10;
       }
       if (state.budget === "mid") {
-        if (meal.price > 20 && meal.price <= 30) score += 12;
-        else if (meal.price <= 20) score += 3;
-        else if (meal.price <= 35) score += 4;
+        if (price > 20 && price <= 30) score += 12;
+        else if (price <= 20) score += 3;
+        else if (price <= 35) score += 4;
       }
       if (state.budget === "high") {
-        if (meal.price > 30 && meal.price <= 45) score += 12;
-        else if (meal.price <= 24) score -= 4;
+        if (price > 30 && price <= 45) score += 12;
+        else if (price <= 24) score -= 4;
       }
-      if (state.budget === "flex" && meal.price >= 30) score += 8;
+      if (state.budget === "flex" && price >= 30) score += 8;
       if (state.health === "happy" && meal.tags.includes("comfort")) score += 14;
       if (state.taste === "spicy" && meal.spicy >= 3) score += 8;
       if (state.taste === "fresh" && meal.oil <= 2) score += 8;
@@ -1745,7 +1771,7 @@
     }
 
     function diversifyMeals(list) {
-      const sorted = [...list].sort((a, b) => b.score - a.score || a.price - b.price);
+      const sorted = [...list].sort((a, b) => b.score - a.score || localPrice(a) - localPrice(b));
       const picked = [];
       const remaining = [...sorted];
       while (remaining.length) {
@@ -1760,7 +1786,7 @@
       const list = meals
         .filter((meal) => !conflicts(meal))
         .map((meal) => ({ ...meal, score: scoreMeal(meal) }))
-        .sort((a, b) => b.score - a.score || a.price - b.price);
+        .sort((a, b) => b.score - a.score || localPrice(a) - localPrice(b));
       return diversifyMeals(list.filter((meal) => meal.score > 0));
     }
 
@@ -1776,7 +1802,8 @@
     function reasonCards(meal) {
       return [
         { title: "为什么是它", text: meal.reason },
-        { title: "适合今天", text: `${labels.budget[state.budget]}、${labels.taste[state.taste]}、${labels.health[state.health]}，比较贴近你现在的选择。` },
+        { title: "适合今天", text: `${labels.region[state.region]}、${labels.budget[state.budget]}、${labels.taste[state.taste]}、${labels.health[state.health]}，比较贴近你现在的选择。` },
+        { title: "价格说明", text: `本地参考价 ${localPriceRange(meal).label}，未接入实时门店和外卖平台价格。` },
         { title: "口感预期", text: `饱腹感 ${meal.satiety}/5，油腻度 ${meal.oil}/5，辣度 ${meal.spicy}/5。` },
         { title: "不适合情况", text: meal.caution }
       ];
@@ -1839,7 +1866,7 @@
             <span>${escapeHTML(meal.emoji)}</span>
             <div>
               <h3>${escapeHTML(meal.name)}</h3>
-              <small>参考价 ${escapeHTML(meal.priceRange.label)} · ${escapeHTML(meal.category)} · 适合今天</small>
+              <small>本地参考价 ${escapeHTML(localPriceRange(meal).label)} · ${escapeHTML(meal.category)} · ${escapeHTML(labels.region[state.region])}</small>
             </div>
           </div>
           <div class="match-score">${escapeHTML(meal.score)}</div>
@@ -1877,7 +1904,7 @@
       altGrid.innerHTML = alternatives.map((item) => `
         <article class="alt-card" data-meal-name="${escapeHTML(item.name)}">
           <strong>${escapeHTML(item.emoji)} ${escapeHTML(item.name)}</strong>
-          <p>参考价 ${escapeHTML(item.priceRange.label)} · ${escapeHTML(item.category)} · 匹配分 ${escapeHTML(item.score)}</p>
+          <p>本地参考价 ${escapeHTML(localPriceRange(item).label)} · ${escapeHTML(item.category)} · 匹配分 ${escapeHTML(item.score)}</p>
           <small>选这个</small>
         </article>
       `).join("");
