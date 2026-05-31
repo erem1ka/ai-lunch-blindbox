@@ -1312,7 +1312,7 @@
                   <h3>今日午餐条件</h3>
                   <span>调整后实时更新推荐</span>
                 </div>
-                <span class="status">Ready</span>
+                <span class="status">已就绪</span>
               </div>
 
               <div class="form-group" data-group="budget">
@@ -1520,7 +1520,19 @@
       time: { rush: "15 分钟", normal: "30 分钟", slow: "慢慢吃", delivery: "等外卖" },
       taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "安慰餐" },
       mode: { nearby: "附近堂食", takeaway: "外卖", desk: "工位解决", team: "和同事吃" },
-      health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" }
+      health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
+      tag: {
+        hot: "热乎",
+        comfort: "安慰餐",
+        nearby: "附近堂食",
+        protein: "蛋白够",
+        spicy: "想吃辣",
+        team: "适合多人",
+        takeaway: "可外带",
+        desk: "工位友好",
+        fresh: "清爽",
+        rush: "出餐快"
+      }
     };
 
     function meal(name, emoji, price, time, tags, avoid, health, satiety, oil, spicy, reason, fit, caution, vegetarian = false) {
@@ -1762,7 +1774,7 @@
         <p>${escapeHTML(meal.reason)}</p>
         <div class="meal-tags">
           ${meal.health.map((item) => `<span>${escapeHTML(labels.health[item] || item)}</span>`).join("")}
-          ${meal.tags.slice(0, 3).map((item) => `<span>${escapeHTML(labels.taste[item] || labels.mode[item] || item)}</span>`).join("")}
+          ${meal.tags.slice(0, 3).map((item) => `<span>${escapeHTML(labels.tag[item] || item)}</span>`).join("")}
         </div>
         <div class="meal-stats">
           <span>饱腹 ${escapeHTML(meal.satiety)}/5</span>
