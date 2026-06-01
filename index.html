@@ -477,7 +477,7 @@
       display: grid;
       grid-template-columns: minmax(280px, .88fr) minmax(0, 1.12fr);
       gap: 18px;
-      align-items: start;
+      align-items: stretch;
     }
 
     .tool-stage {
@@ -498,7 +498,11 @@
       box-shadow: var(--small-shadow);
     }
 
-    .decision-panel { padding: 24px; }
+    .decision-panel {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
 
     .panel-top {
       display: flex;
@@ -606,6 +610,45 @@
     }
 
     .avoid-grid { grid-template-columns: 1fr; }
+
+    .selection-summary {
+      margin-top: auto;
+      padding-top: 18px;
+    }
+
+    .selection-summary-inner {
+      border: 1px solid rgba(63, 143, 90, .16);
+      border-radius: 16px;
+      background:
+        linear-gradient(135deg, rgba(237, 248, 239, .82), rgba(255, 247, 224, .56));
+      padding: 14px;
+    }
+
+    .selection-summary strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #315f43;
+      font-size: 13px;
+    }
+
+    .selection-summary-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .selection-summary-list span {
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid rgba(63, 143, 90, .12);
+      background: rgba(255, 255, 255, .86);
+      color: #4d5964;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
     .recommend-panel { overflow: hidden; }
 
@@ -1244,6 +1287,7 @@
       .metrics-layout,
       .iteration-grid { grid-template-columns: 1fr; }
       .meal-header, .panel-top, .memory-bar { flex-direction: column; align-items: flex-start; }
+      .selection-summary { display: none; }
       .recommend-panel {
         position: fixed;
         left: 12px;
@@ -1582,6 +1626,12 @@
                 </div>
               </div>
               </details>
+              <div class="selection-summary" aria-label="当前选择摘要">
+                <div class="selection-summary-inner">
+                  <strong>当前选择</strong>
+                  <div class="selection-summary-list" id="selectionSummary"></div>
+                </div>
+              </div>
             </form>
 
             <section class="recommend-panel" aria-live="polite">
@@ -1733,6 +1783,7 @@
       region: { metro: "一线核心区", capital: "新一线/省会", standard: "普通城市", campus: "校园低价区" },
       taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "满足一点" },
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
+      avoid: { spicy: "不吃辣", beef: "不吃牛肉", seafood: "不吃海鲜", meat: "素食优先" },
       tag: {
         hot: "热乎",
         comfort: "满足一点",
@@ -2084,6 +2135,17 @@
         button.setAttribute("aria-pressed", active ? "true" : "false");
       });
       document.getElementById("noRepeatToggle").checked = state.noRepeat;
+      const summary = document.getElementById("selectionSummary");
+      const avoidText = state.avoid.size
+        ? Array.from(state.avoid).map((item) => labels.avoid[item]).join("、")
+        : "无忌口";
+      summary.innerHTML = [
+        `预算 ${labels.budget[state.budget]}`,
+        labels.region[state.region],
+        labels.taste[state.taste],
+        labels.health[state.health],
+        avoidText
+      ].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
     }
 
     function setMobileSheet(open) {
