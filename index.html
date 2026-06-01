@@ -621,6 +621,18 @@
 
     .recommend-top strong { font-size: 15px; }
 
+    .recommend-title {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .mobile-recommend-summary,
+    .mobile-detail-button,
+    .mobile-close-button {
+      display: none;
+    }
+
     .recommend-actions {
       display: flex;
       align-items: center;
@@ -1221,6 +1233,9 @@
         white-space: normal;
         text-wrap: balance;
       }
+      #tool {
+        padding-bottom: 132px;
+      }
       .card-grid,
       .option-grid,
       .reason-grid,
@@ -1228,10 +1243,116 @@
       .info-grid,
       .metrics-layout,
       .iteration-grid { grid-template-columns: 1fr; }
-      .meal-header, .panel-top, .recommend-top, .memory-bar { flex-direction: column; align-items: flex-start; }
-      .recommend-panel { order: -1; }
+      .meal-header, .panel-top, .memory-bar { flex-direction: column; align-items: flex-start; }
+      .recommend-panel {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        z-index: 30;
+        max-height: calc(100dvh - 24px);
+        border-radius: 22px;
+        box-shadow: 0 18px 48px rgba(24, 28, 35, .22);
+        overflow: hidden;
+      }
+      .recommend-panel .recommend-body {
+        display: none;
+        max-height: calc(100dvh - 118px);
+        overflow: auto;
+        padding: 16px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .recommend-panel.mobile-expanded .recommend-body {
+        display: grid;
+      }
+      .recommend-top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        padding: 12px;
+        gap: 10px;
+      }
+      .recommend-title {
+        min-width: 0;
+      }
+      .recommend-title strong {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .mobile-recommend-summary {
+        display: grid;
+        gap: 2px;
+        min-width: 0;
+      }
+      .mobile-recommend-summary b {
+        display: block;
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.22;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .mobile-recommend-summary small {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 760;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .recommend-actions {
+        flex: 0 0 auto;
+        justify-content: flex-end;
+        gap: 6px;
+      }
+      .recommend-actions .no-repeat-toggle,
+      .recommend-actions #resetMemoryButton {
+        display: none;
+      }
+      .recommend-actions button,
+      .feedback-actions button,
+      .memory-bar button {
+        min-height: 34px;
+        padding: 0 12px;
+      }
+      .mobile-detail-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line) !important;
+        background: #fff !important;
+        color: #3f4750 !important;
+        box-shadow: none !important;
+      }
+      .mobile-close-button {
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line) !important;
+        background: #fff !important;
+        color: #3f4750 !important;
+        box-shadow: none !important;
+      }
+      .recommend-panel.mobile-expanded .mobile-detail-button {
+        display: none;
+      }
+      .recommend-panel.mobile-expanded .mobile-close-button {
+        display: inline-flex;
+      }
+      .main-meal {
+        padding: 18px;
+      }
+      .meal-title h3 {
+        font-size: 22px;
+      }
+      .meal-title span {
+        font-size: 34px;
+      }
       .match-score { width: 64px; height: 64px; }
       footer { padding: 26px 20px; flex-direction: column; }
+      body.mobile-sheet-active {
+        overflow: hidden;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1465,7 +1586,10 @@
 
             <section class="recommend-panel" aria-live="polite">
               <div class="recommend-top">
-                <strong>今日推荐</strong>
+                <div class="recommend-title">
+                  <strong>当前推荐</strong>
+                  <div class="mobile-recommend-summary" id="mobileRecommendSummary"></div>
+                </div>
                 <div class="recommend-actions">
                   <label class="no-repeat-toggle">
                     <input type="checkbox" id="noRepeatToggle" checked>
@@ -1473,9 +1597,11 @@
                   </label>
                   <button type="button" id="shuffleButton">换一换</button>
                   <button class="secondary" type="button" id="resetMemoryButton">清空偏好</button>
+                  <button class="mobile-detail-button" type="button" id="mobileDetailButton" aria-expanded="false" aria-controls="recommendBody">详情</button>
+                  <button class="mobile-close-button" type="button" id="mobileCloseButton" aria-expanded="true" aria-controls="recommendBody">收起</button>
                 </div>
               </div>
-              <div class="recommend-body">
+              <div class="recommend-body" id="recommendBody">
                 <div class="empty-state" id="emptyState">
                   暂时没有完全匹配的选择。可以放宽预算、调整口味，或者取消部分忌口。
                 </div>
@@ -1956,11 +2082,22 @@
       document.getElementById("noRepeatToggle").checked = state.noRepeat;
     }
 
+    function setMobileSheet(open) {
+      const panel = document.querySelector(".recommend-panel");
+      const detailButton = document.getElementById("mobileDetailButton");
+      const closeButton = document.getElementById("mobileCloseButton");
+      panel.classList.toggle("mobile-expanded", open);
+      document.body.classList.toggle("mobile-sheet-active", open);
+      detailButton.setAttribute("aria-expanded", open ? "true" : "false");
+      closeButton.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
     function render() {
       updateOptions();
       const list = rankedMeals();
       const empty = document.getElementById("emptyState");
       const main = document.getElementById("mainMeal");
+      const mobileSummary = document.getElementById("mobileRecommendSummary");
       const reasonGrid = document.getElementById("reasonGrid");
       const altGrid = document.getElementById("altGrid");
       const candidateMeta = document.getElementById("candidateMeta");
@@ -1978,6 +2115,10 @@
         candidateMeta.style.display = "none";
         morePanel.style.display = "none";
         memoryBar.style.display = "none";
+        mobileSummary.innerHTML = `
+          <b>暂无匹配</b>
+          <small>放宽预算或取消部分忌口</small>
+        `;
         reasonGrid.innerHTML = "";
         altGrid.innerHTML = "";
         candidateList.innerHTML = "";
@@ -1999,6 +2140,10 @@
         .slice(0, 6);
       const moreCandidates = visibleCandidateList(list, meal.name);
       const rejected = rejectedMeal();
+      mobileSummary.innerHTML = `
+        <b>${escapeHTML(meal.emoji)} ${escapeHTML(meal.name)}</b>
+        <small>${escapeHTML(localPriceRange(meal).label)} · ${escapeHTML(meal.score)} 分 · 点详情看原因</small>
+      `;
       main.innerHTML = `
         <div class="meal-header">
           <div class="meal-title">
@@ -2106,6 +2251,18 @@
       savePreference();
       state.offset = 0;
       render();
+    });
+
+    document.getElementById("mobileDetailButton").addEventListener("click", () => {
+      setMobileSheet(true);
+    });
+
+    document.getElementById("mobileCloseButton").addEventListener("click", () => {
+      setMobileSheet(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setMobileSheet(false);
     });
 
     document.getElementById("feedbackActions").addEventListener("click", (event) => {
