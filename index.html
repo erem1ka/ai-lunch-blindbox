@@ -1489,7 +1489,7 @@
           <article class="insight-card">
             <div class="icon">03</div>
             <h3>口味摇摆</h3>
-            <p>想吃热乎、清爽、重口或满足一点，都能按当天状态切换。</p>
+            <p>想吃热乎、清淡、重口或满足一点，都能按当天状态切换。</p>
           </article>
           <article class="insight-card">
             <div class="icon">04</div>
@@ -1598,7 +1598,7 @@
                 <div class="option-grid">
                   <button class="option active" type="button" data-value="hot">热乎</button>
                   <button class="option" type="button" data-value="spicy">想吃辣</button>
-                  <button class="option" type="button" data-value="fresh">清爽</button>
+                  <button class="option" type="button" data-value="fresh">清淡</button>
                   <button class="option" type="button" data-value="comfort">满足一点</button>
                 </div>
               </div>
@@ -1781,7 +1781,7 @@
     const labels = {
       budget: { low: "20 元内", mid: "30 元内", high: "45 元内", flex: "今天放开" },
       region: { metro: "一线核心区", capital: "新一线/省会", standard: "普通城市", campus: "校园低价区" },
-      taste: { hot: "热乎", spicy: "想吃辣", fresh: "清爽", comfort: "满足一点" },
+      taste: { hot: "热乎", spicy: "想吃辣", fresh: "清淡", comfort: "满足一点" },
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
       avoid: { spicy: "不吃辣", beef: "不吃牛肉", seafood: "不吃海鲜", meat: "素食优先" },
       tag: {
@@ -1793,7 +1793,7 @@
         team: "适合多人",
         takeaway: "可外带",
         desk: "工位友好",
-        fresh: "清爽",
+        fresh: "清淡",
         rush: "出餐快"
       }
     };
@@ -1833,7 +1833,7 @@
     }
 
     function meal(category, name, emoji, price, tags, avoid, health, satiety, oil, spicy, vegetarian = false) {
-      const tasteText = tags.includes("spicy") ? "口味更直接" : tags.includes("fresh") ? "整体更清爽" : tags.includes("comfort") ? "满足感更强" : "口味比较稳";
+      const tasteText = tags.includes("spicy") ? "口味更直接" : tags.includes("fresh") ? "整体更清淡" : tags.includes("comfort") ? "满足感更强" : "口味比较稳";
       const healthText = health.includes("light") ? "负担相对轻" : health.includes("protein") ? "蛋白质更足" : health.includes("happy") ? "更适合想吃开心一点" : "搭配相对均衡";
       const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 38 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
       return {
