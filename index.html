@@ -2055,6 +2055,10 @@
       return picked;
     }
 
+    function quickAlternativeLimit() {
+      return window.matchMedia("(max-width: 760px)").matches ? 6 : 2;
+    }
+
     function reasonCards(meal) {
       return [
         { title: "为什么是它", text: meal.reason },
@@ -2137,7 +2141,7 @@
       const meal = list[index];
       const alternatives = list
         .filter((item, i) => i !== index && item.category !== meal.category)
-        .slice(0, 6);
+        .slice(0, quickAlternativeLimit());
       const moreCandidates = visibleCandidateList(list, meal.name);
       const rejected = rejectedMeal();
       mobileSummary.innerHTML = `
@@ -2263,6 +2267,11 @@
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") setMobileSheet(false);
+    });
+
+    window.addEventListener("resize", () => {
+      window.clearTimeout(window.__mealPickerResizeTimer);
+      window.__mealPickerResizeTimer = window.setTimeout(render, 120);
     });
 
     document.getElementById("feedbackActions").addEventListener("click", (event) => {
