@@ -717,6 +717,74 @@
       box-shadow: var(--micro-shadow);
     }
 
+    .quick-pick {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      border: 2px dashed rgba(233, 75, 53, .3);
+      border-radius: 14px;
+      background: var(--tomato-soft);
+      color: var(--tomato);
+      cursor: pointer;
+      padding: 0 18px;
+      font-size: 15px;
+      font-weight: 820;
+      margin-bottom: 18px;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease), border-color 180ms var(--ease);
+    }
+
+    .quick-pick:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 28px rgba(233, 75, 53, .12);
+      background: #ffe8e0;
+      border-color: rgba(233, 75, 53, .5);
+    }
+
+    .quick-pick::before {
+      content: "🎲";
+      font-size: 20px;
+    }
+
+    .order-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .order-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 780;
+      transition: transform 180ms var(--ease), box-shadow 180ms var(--ease);
+    }
+
+    .order-links a:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--micro-shadow);
+    }
+
+    .order-links .link-meituan {
+      background: #fff3e0;
+      color: #e68a00;
+      border: 1px solid rgba(230, 138, 0, .2);
+    }
+
+    .order-links .link-eleme {
+      background: #e3f2fd;
+      color: #1976d2;
+      border: 1px solid rgba(25, 118, 210, .2);
+    }
+
     .no-repeat-toggle {
       display: inline-flex;
       align-items: center;
@@ -1573,12 +1641,14 @@
                 <span class="status">已就绪</span>
               </div>
 
+              <button class="quick-pick" type="button" id="quickPickButton">不想选了，随便推荐一个</button>
+
               <div class="form-group" data-group="budget">
                 <div class="group-label">预算 <span>硬约束</span></div>
                 <div class="option-grid">
                   <button class="option" type="button" data-value="low">20 元内</button>
                   <button class="option active" type="button" data-value="mid">30 元内</button>
-                  <button class="option" type="button" data-value="high">45 元内</button>
+                  <button class="option" type="button" data-value="high">40 元内</button>
                   <button class="option" type="button" data-value="flex">今天放开</button>
                 </div>
               </div>
@@ -1769,7 +1839,7 @@
   </div>
 
   <script>
-    const budgetLimit = { low: 20, mid: 30, high: 45, flex: 999 };
+    const budgetLimit = { low: 20, mid: 30, high: 40, flex: 999 };
     const storageKey = "mealBlindboxPreferenceV2";
     const storage = (() => {
       try {
@@ -1779,7 +1849,7 @@
       }
     })();
     const labels = {
-      budget: { low: "20 元内", mid: "30 元内", high: "45 元内", flex: "今天放开" },
+      budget: { low: "20 元内", mid: "30 元内", high: "40 元内", flex: "今天放开" },
       region: { metro: "一线核心区", capital: "新一线/省会", standard: "普通城市", campus: "校园低价区" },
       taste: { hot: "热乎", spicy: "想吃辣", fresh: "清淡", comfort: "不限" },
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
@@ -1835,7 +1905,7 @@
     function meal(category, name, emoji, price, tags, avoid, health, satiety, oil, spicy, vegetarian = false) {
       const tasteText = tags.includes("spicy") ? "口味更直接" : tags.includes("fresh") ? "整体更清淡" : tags.includes("comfort") ? "满足感更强" : "口味比较稳";
       const healthText = health.includes("light") ? "负担相对轻" : health.includes("protein") ? "蛋白质更足" : health.includes("happy") ? "更适合想吃开心一点" : "搭配相对均衡";
-      const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 38 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
+      const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 32 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
       return {
         category,
         name,
@@ -1856,106 +1926,115 @@
     }
 
     const meals = [
-      meal("盖饭快餐", "番茄鸡蛋盖饭", "🍳", 19, ["hot", "rush", "nearby"], [], ["balanced"], 3, 2, 0, true),
-      meal("盖饭快餐", "鱼香肉丝饭", "🍚", 24, ["hot", "comfort", "nearby"], [], ["balanced", "happy"], 4, 3, 1),
-      meal("盖饭快餐", "宫保鸡丁饭", "🍛", 26, ["hot", "comfort", "protein"], [], ["balanced", "protein"], 4, 3, 1),
-      meal("盖饭快餐", "麻婆豆腐盖饭", "🍚", 22, ["spicy", "hot", "rush"], ["spicy"], ["balanced", "happy"], 3, 3, 3),
-      meal("盖饭快餐", "土豆牛腩饭", "🍛", 32, ["hot", "comfort", "protein"], ["beef"], ["protein", "happy"], 5, 3, 0),
-      meal("盖饭快餐", "黄焖鸡米饭", "🍲", 27, ["hot", "comfort", "protein"], [], ["balanced", "happy"], 5, 4, 1),
-      meal("盖饭快餐", "照烧鸡腿饭", "🍱", 29, ["hot", "comfort", "protein"], [], ["balanced", "protein"], 5, 3, 0),
-      meal("盖饭快餐", "沙县鸡腿饭", "🍗", 23, ["hot", "rush", "protein"], [], ["balanced", "protein"], 4, 3, 0),
-      meal("盖饭快餐", "叉烧双拼饭", "🍚", 36, ["comfort", "hot", "protein"], [], ["happy", "protein"], 5, 4, 0),
-      meal("盖饭快餐", "卤肉饭", "🍚", 28, ["comfort", "hot"], [], ["happy"], 5, 4, 0),
-      meal("盖饭快餐", "咖喱鸡饭", "🍛", 29, ["comfort", "hot", "protein"], [], ["balanced", "protein"], 4, 2, 1),
-      meal("盖饭快餐", "黑椒牛柳饭", "🍛", 35, ["comfort", "hot", "protein"], ["beef"], ["protein", "happy"], 5, 3, 1),
-      meal("盖饭快餐", "酸汤肥牛饭", "🍛", 35, ["spicy", "hot", "protein"], ["spicy", "beef"], ["protein", "happy"], 5, 3, 3),
-      meal("盖饭快餐", "红烧排骨饭", "🍖", 34, ["comfort", "hot", "protein"], [], ["protein", "happy"], 5, 4, 0),
-      meal("盖饭快餐", "蔬菜咖喱饭", "🍛", 27, ["comfort", "hot"], [], ["balanced", "happy"], 4, 2, 1, true),
-      meal("粉面米线", "兰州牛肉面", "🍜", 22, ["hot", "rush", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0),
-      meal("粉面米线", "重庆小面", "🍜", 18, ["spicy", "hot", "rush"], ["spicy"], ["happy"], 3, 3, 4, true),
-      meal("粉面米线", "云南过桥米线", "🍜", 29, ["hot", "comfort"], [], ["balanced"], 4, 2, 1),
-      meal("粉面米线", "螺蛳粉", "🍜", 26, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 4, 3, 4, true),
-      meal("粉面米线", "炸酱面", "🍜", 24, ["comfort", "nearby", "rush"], [], ["happy"], 4, 3, 0),
-      meal("粉面米线", "葱油拌面加蛋", "🍜", 18, ["comfort", "rush"], [], ["happy"], 3, 3, 0, true),
-      meal("粉面米线", "番茄牛肉粉", "🍜", 28, ["hot", "comfort", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0),
-      meal("粉面米线", "越南牛肉粉", "🍜", 38, ["fresh", "hot", "protein"], ["beef"], ["balanced", "protein"], 3, 1, 0),
-      meal("粉面米线", "酸辣粉", "🍜", 17, ["spicy", "fresh", "rush"], ["spicy"], ["happy"], 3, 2, 4, true),
-      meal("粉面米线", "鲜虾云吞面", "🥟", 33, ["hot", "fresh"], ["seafood"], ["balanced"], 3, 2, 0),
-      meal("粉面米线", "牛肉河粉", "🍜", 32, ["fresh", "hot", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0),
-      meal("粉面米线", "热干面", "🍜", 16, ["comfort", "rush"], [], ["happy"], 4, 3, 0, true),
-      meal("粉面米线", "日式豚骨拉面", "🍜", 39, ["hot", "comfort", "protein"], [], ["happy", "protein"], 4, 4, 0),
-      meal("粉面米线", "刀削面", "🍜", 23, ["hot", "comfort"], [], ["balanced"], 4, 2, 0),
-      meal("粉面米线", "凉皮肉夹馍组合", "🥙", 24, ["fresh", "rush", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
-      meal("粥汤馄饨", "皮蛋瘦肉粥", "🥣", 16, ["hot", "rush"], [], ["light", "balanced"], 2, 1, 0),
-      meal("粥汤馄饨", "南瓜小米粥素包", "🥣", 18, ["hot", "rush"], [], ["light"], 2, 1, 0, true),
-      meal("粥汤馄饨", "海鲜砂锅粥", "🥣", 42, ["hot", "fresh"], ["seafood"], ["balanced", "protein"], 3, 1, 0),
-      meal("粥汤馄饨", "鸡丝粥", "🥣", 24, ["hot", "rush", "protein"], [], ["light", "protein"], 3, 1, 0),
-      meal("粥汤馄饨", "关东煮组合", "🍢", 22, ["hot", "rush"], [], ["balanced"], 3, 2, 0),
-      meal("粥汤馄饨", "番茄豆腐汤饭", "🍲", 25, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("粥汤馄饨", "菌菇汤饭", "🍄", 25, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("粥汤馄饨", "白菜猪肉饺子", "🥟", 26, ["hot", "comfort"], [], ["balanced"], 4, 2, 0),
-      meal("粥汤馄饨", "鲜肉小馄饨", "🥟", 20, ["hot", "rush"], [], ["balanced"], 3, 2, 0),
-      meal("粥汤馄饨", "锅贴小米粥", "🥟", 24, ["hot", "comfort"], [], ["balanced"], 4, 3, 0),
-      meal("麻辣烫冒菜", "麻辣烫轻菜版", "🥘", 25, ["spicy", "hot"], ["spicy"], ["balanced", "happy"], 4, 3, 3),
-      meal("麻辣烫冒菜", "麻辣拌", "🥗", 23, ["spicy", "comfort"], ["spicy"], ["happy"], 4, 3, 4, true),
-      meal("麻辣烫冒菜", "冒菜小份", "🥘", 28, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 4, 4, 4),
-      meal("麻辣烫冒菜", "番茄麻辣烫", "🥘", 27, ["hot", "fresh"], [], ["balanced"], 4, 2, 1, true),
-      meal("麻辣烫冒菜", "麻辣香锅单人", "🍲", 38, ["spicy", "comfort"], ["spicy"], ["happy", "protein"], 5, 5, 4),
-      meal("麻辣烫冒菜", "酸菜鱼单人份", "🐟", 39, ["spicy", "hot", "protein"], ["spicy", "seafood"], ["protein", "happy"], 5, 3, 3),
-      meal("麻辣烫冒菜", "香辣烤鱼饭", "🐟", 39, ["spicy", "hot", "comfort"], ["spicy", "seafood"], ["protein", "happy"], 5, 4, 4),
-      meal("麻辣烫冒菜", "串串杯", "🍢", 22, ["spicy", "rush"], ["spicy"], ["happy"], 3, 3, 4),
-      meal("麻辣烫冒菜", "泡菜豆腐锅", "🍲", 31, ["spicy", "hot"], ["spicy"], ["balanced", "light"], 3, 2, 3, true),
-      meal("麻辣烫冒菜", "水煮肉片饭", "🍛", 34, ["spicy", "hot", "protein"], ["spicy"], ["protein", "happy"], 5, 4, 4),
-      meal("轻食健康", "鸡胸轻食碗", "🥗", 32, ["fresh", "protein"], [], ["light", "protein", "balanced"], 3, 1, 0),
-      meal("轻食健康", "烤鸡轻食盒", "🍗", 36, ["fresh", "protein"], [], ["light", "protein", "balanced"], 4, 2, 0),
-      meal("轻食健康", "虾仁沙拉碗", "🥗", 39, ["fresh", "protein"], ["seafood"], ["light", "protein"], 3, 1, 0),
-      meal("轻食健康", "牛油果鸡蛋三明治", "🥪", 26, ["fresh", "rush"], [], ["light", "balanced"], 2, 1, 0, true),
-      meal("轻食健康", "豆腐蔬菜锅", "🍲", 28, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("轻食健康", "素食拌饭", "🥬", 24, ["fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("轻食健康", "鹰嘴豆能量碗", "🥗", 34, ["fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("轻食健康", "金枪鱼三明治", "🥪", 28, ["fresh", "protein", "rush"], ["seafood"], ["light", "protein"], 3, 1, 0),
-      meal("轻食健康", "藜麦鸡肉碗", "🥗", 38, ["fresh", "protein"], [], ["light", "protein", "balanced"], 4, 1, 0),
-      meal("轻食健康", "水煮蛋蔬菜杯", "🥚", 20, ["fresh", "rush"], [], ["light", "balanced"], 2, 1, 0, true),
-      meal("轻食健康", "咖啡店鸡肉卷", "🌯", 34, ["fresh", "protein"], [], ["balanced", "protein"], 3, 2, 0),
-      meal("轻食健康", "希腊酸奶水果杯", "🥣", 24, ["fresh", "rush"], [], ["light"], 2, 1, 0, true),
-      meal("便利店小吃", "饭团酸奶组合", "🍙", 19, ["fresh", "rush"], [], ["light", "balanced"], 2, 1, 0),
-      meal("便利店小吃", "饭团茶叶蛋豆浆", "🍙", 18, ["fresh", "rush", "protein"], [], ["balanced", "protein"], 3, 1, 0, true),
-      meal("便利店小吃", "烤冷面加蛋", "🥚", 17, ["comfort", "rush"], [], ["happy"], 3, 3, 1, true),
-      meal("便利店小吃", "手作火腿三明治", "🥪", 24, ["fresh", "rush"], [], ["balanced"], 2, 2, 0),
-      meal("便利店小吃", "肉夹馍凉皮组合", "🥙", 24, ["fresh", "rush", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
-      meal("便利店小吃", "煎饼果子", "🌯", 16, ["comfort", "rush"], [], ["happy"], 3, 3, 0, true),
-      meal("便利店小吃", "鸡蛋灌饼", "🥚", 15, ["comfort", "rush"], [], ["happy"], 3, 3, 0, true),
-      meal("便利店小吃", "包子豆浆组合", "🥟", 14, ["hot", "rush"], [], ["balanced"], 3, 2, 0),
-      meal("便利店小吃", "寿司饭团组合", "🍣", 28, ["fresh", "rush"], ["seafood"], ["light", "balanced"], 3, 1, 0),
-      meal("便利店小吃", "盒装番茄意面", "🍝", 25, ["comfort", "rush"], [], ["balanced"], 3, 2, 0, true),
-      meal("西式简餐", "鸡腿汉堡套餐", "🍔", 29, ["comfort", "rush", "protein"], [], ["happy", "protein"], 4, 4, 0),
-      meal("西式简餐", "牛肉汉堡", "🍔", 38, ["comfort", "rush", "protein"], ["beef"], ["happy", "protein"], 4, 4, 0),
-      meal("西式简餐", "墨西哥鸡肉卷", "🌯", 37, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 1),
-      meal("西式简餐", "番茄鸡肉意面", "🍝", 35, ["comfort", "protein"], [], ["balanced", "protein"], 4, 2, 0),
-      meal("西式简餐", "奶油蘑菇意面", "🍝", 34, ["comfort"], [], ["happy"], 4, 4, 0, true),
-      meal("西式简餐", "玛格丽特披萨", "🍕", 32, ["comfort"], [], ["happy"], 4, 3, 0, true),
-      meal("西式简餐", "烤肉披萨", "🍕", 39, ["comfort", "protein"], [], ["happy", "protein"], 5, 4, 0),
-      meal("西式简餐", "炸鸡沙拉杯", "🍗", 31, ["fresh", "comfort"], [], ["happy"], 3, 4, 0),
-      meal("西式简餐", "热狗套餐", "🌭", 27, ["comfort", "rush"], [], ["happy"], 3, 4, 0),
-      meal("西式简餐", "凯撒鸡肉卷", "🌯", 33, ["fresh", "protein"], [], ["balanced", "protein"], 3, 2, 0),
-      meal("日韩东南亚", "寿司便当", "🍣", 39, ["fresh"], ["seafood"], ["light", "balanced"], 3, 1, 0),
-      meal("日韩东南亚", "日料饭团便当", "🍣", 36, ["fresh", "comfort"], ["seafood"], ["balanced", "light"], 3, 1, 0),
-      meal("日韩东南亚", "石锅拌饭", "🍚", 34, ["hot", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
-      meal("日韩东南亚", "海南鸡饭", "🍗", 34, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 0),
-      meal("日韩东南亚", "泰式打抛鸡饭", "🍛", 36, ["spicy", "comfort", "protein"], ["spicy"], ["protein", "happy"], 4, 3, 3),
-      meal("日韩东南亚", "泰式绿咖喱鸡饭", "🍛", 38, ["spicy", "comfort", "protein"], ["spicy"], ["protein", "happy"], 4, 3, 2),
-      meal("日韩东南亚", "日式咖喱猪排饭", "🍛", 40, ["comfort", "protein"], [], ["happy", "protein"], 5, 4, 0),
-      meal("日韩东南亚", "韩式拌饭", "🍚", 33, ["fresh", "spicy"], ["spicy"], ["balanced"], 4, 2, 2),
-      meal("日韩东南亚", "部队锅小份", "🍲", 42, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 5, 4, 3),
-      meal("日韩东南亚", "越南春卷米粉", "🥗", 32, ["fresh"], [], ["light", "balanced"], 3, 1, 0),
-      meal("地方菜小碗菜", "港式茶餐厅双拼饭", "🍛", 42, ["comfort", "hot", "protein"], [], ["happy"], 5, 4, 0),
-      meal("地方菜小碗菜", "猪脚饭小份", "🍖", 32, ["comfort", "hot"], [], ["happy"], 5, 5, 0),
-      meal("地方菜小碗菜", "小碗菜拼饭", "🍱", 28, ["hot", "comfort"], [], ["balanced"], 4, 3, 1),
-      meal("地方菜小碗菜", "木桶饭", "🍚", 26, ["hot", "comfort"], [], ["balanced"], 4, 3, 0),
-      meal("地方菜小碗菜", "新疆拌面", "🍜", 32, ["comfort", "hot"], ["beef"], ["happy", "protein"], 5, 3, 1),
-      meal("地方菜小碗菜", "椰子鸡饭", "🍗", 39, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 0),
-      meal("地方菜小碗菜", "砂锅豆腐饭", "🍲", 24, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("地方菜小碗菜", "东北饺子拼盘", "🥟", 30, ["hot", "comfort"], [], ["balanced"], 4, 3, 0)
+      // === 盖饭快餐（真实参考：杨铭宇黄焖鸡 15-18 元、大米先生 23 元、霸碗盖码饭 20 元）===
+      meal("盖饭快餐", "番茄鸡蛋盖饭", "🍳", 14, ["hot", "rush", "nearby"], [], ["balanced"], 3, 2, 0, true),
+      meal("盖饭快餐", "鱼香肉丝饭", "🍚", 16, ["hot", "comfort", "nearby"], [], ["balanced", "happy"], 4, 3, 1),
+      meal("盖饭快餐", "宫保鸡丁饭", "🍛", 17, ["hot", "comfort", "protein"], [], ["balanced", "protein"], 4, 3, 1),
+      meal("盖饭快餐", "麻婆豆腐盖饭", "🍚", 14, ["spicy", "hot", "rush"], ["spicy"], ["balanced", "happy"], 3, 3, 3),
+      meal("盖饭快餐", "土豆牛腩饭", "🍛", 24, ["hot", "comfort", "protein"], ["beef"], ["protein", "happy"], 5, 3, 0),
+      meal("盖饭快餐", "黄焖鸡米饭", "🍲", 16, ["hot", "comfort", "protein"], [], ["balanced", "happy"], 5, 4, 1),
+      meal("盖饭快餐", "照烧鸡腿饭", "🍱", 18, ["hot", "comfort", "protein"], [], ["balanced", "protein"], 5, 3, 0),
+      meal("盖饭快餐", "沙县鸡腿饭", "🍗", 14, ["hot", "rush", "protein"], [], ["balanced", "protein"], 4, 3, 0),
+      meal("盖饭快餐", "叉烧双拼饭", "🍚", 25, ["comfort", "hot", "protein"], [], ["happy", "protein"], 5, 4, 0),
+      meal("盖饭快餐", "卤肉饭", "🍚", 17, ["comfort", "hot"], [], ["happy"], 5, 4, 0),
+      meal("盖饭快餐", "咖喱鸡饭", "🍛", 18, ["comfort", "hot", "protein"], [], ["balanced", "protein"], 4, 2, 1),
+      meal("盖饭快餐", "黑椒牛柳饭", "🍛", 23, ["comfort", "hot", "protein"], ["beef"], ["protein", "happy"], 5, 3, 1),
+      meal("盖饭快餐", "酸汤肥牛饭", "🍛", 24, ["spicy", "hot", "protein"], ["spicy", "beef"], ["protein", "happy"], 5, 3, 3),
+      meal("盖饭快餐", "红烧排骨饭", "🍖", 22, ["comfort", "hot", "protein"], [], ["protein", "happy"], 5, 4, 0),
+      meal("盖饭快餐", "蔬菜咖喱饭", "🍛", 16, ["comfort", "hot"], [], ["balanced", "happy"], 4, 2, 1, true),
+      // === 粉面米线（真实参考：兰州牛肉面 15 元、重庆小面 12-15 元、生烫牛肉粉 20-25 元、热干面 8-10 元）===
+      meal("粉面米线", "兰州牛肉面", "🍜", 15, ["hot", "rush", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0),
+      meal("粉面米线", "重庆小面", "🍜", 12, ["spicy", "hot", "rush"], ["spicy"], ["happy"], 3, 3, 4, true),
+      meal("粉面米线", "云南过桥米线", "🍜", 18, ["hot", "comfort"], [], ["balanced"], 4, 2, 1),
+      meal("粉面米线", "螺蛳粉", "🍜", 16, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 4, 3, 4, true),
+      meal("粉面米线", "炸酱面", "🍜", 14, ["comfort", "nearby", "rush"], [], ["happy"], 4, 3, 0),
+      meal("粉面米线", "葱油拌面加蛋", "🍜", 10, ["comfort", "rush"], [], ["happy"], 3, 3, 0, true),
+      meal("粉面米线", "番茄牛肉粉", "🍜", 18, ["hot", "comfort", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0),
+      meal("粉面米线", "越南牛肉粉", "🍜", 26, ["fresh", "hot", "protein"], ["beef"], ["balanced", "protein"], 3, 1, 0),
+      meal("粉面米线", "酸辣粉", "🍜", 12, ["spicy", "fresh", "rush"], ["spicy"], ["happy"], 3, 2, 4, true),
+      meal("粉面米线", "鲜虾云吞面", "🥟", 20, ["hot", "fresh"], ["seafood"], ["balanced"], 3, 2, 0),
+      meal("粉面米线", "牛肉河粉", "🍜", 20, ["fresh", "hot", "protein"], ["beef"], ["balanced", "protein"], 4, 2, 0),
+      meal("粉面米线", "热干面", "🍜", 9, ["comfort", "rush"], [], ["happy"], 4, 3, 0, true),
+      meal("粉面米线", "日式豚骨拉面", "🍜", 30, ["hot", "comfort", "protein"], [], ["happy", "protein"], 4, 4, 0),
+      meal("粉面米线", "刀削面", "🍜", 14, ["hot", "comfort"], [], ["balanced"], 4, 2, 0),
+      meal("粉面米线", "凉皮肉夹馍组合", "🥙", 16, ["fresh", "rush", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
+      // === 粥汤馄饨（真实参考：皮蛋瘦肉粥 8-12 元、饺子 15-22 元、馄饨 10-15 元）===
+      meal("粥汤馄饨", "皮蛋瘦肉粥", "🥣", 12, ["hot", "rush"], [], ["light", "balanced"], 2, 1, 0),
+      meal("粥汤馄饨", "南瓜小米粥素包", "🥣", 10, ["hot", "rush"], [], ["light"], 2, 1, 0, true),
+      meal("粥汤馄饨", "海鲜砂锅粥", "🥣", 28, ["hot", "fresh"], ["seafood"], ["balanced", "protein"], 3, 1, 0),
+      meal("粥汤馄饨", "鸡丝粥", "🥣", 14, ["hot", "rush", "protein"], [], ["light", "protein"], 3, 1, 0),
+      meal("粥汤馄饨", "关东煮组合", "🍢", 15, ["hot", "rush"], [], ["balanced"], 3, 2, 0),
+      meal("粥汤馄饨", "番茄豆腐汤饭", "🍲", 15, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
+      meal("粥汤馄饨", "菌菇汤饭", "🍄", 15, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
+      meal("粥汤馄饨", "白菜猪肉饺子", "🥟", 18, ["hot", "comfort"], [], ["balanced"], 4, 2, 0),
+      meal("粥汤馄饨", "鲜肉小馄饨", "🥟", 12, ["hot", "rush"], [], ["balanced"], 3, 2, 0),
+      meal("粥汤馄饨", "锅贴小米粥", "🥟", 16, ["hot", "comfort"], [], ["balanced"], 4, 3, 0),
+      // === 麻辣烫冒菜（真实参考：张亮/杨国福麻辣烫 人均 20-28 元、冒菜小份 18-25 元）===
+      meal("麻辣烫冒菜", "麻辣烫轻菜版", "🥘", 20, ["spicy", "hot"], ["spicy"], ["balanced", "happy"], 4, 3, 3),
+      meal("麻辣烫冒菜", "麻辣拌", "🥗", 18, ["spicy", "comfort"], ["spicy"], ["happy"], 4, 3, 4, true),
+      meal("麻辣烫冒菜", "冒菜小份", "🥘", 22, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 4, 4, 4),
+      meal("麻辣烫冒菜", "番茄麻辣烫", "🥘", 22, ["hot", "fresh"], [], ["balanced"], 4, 2, 1, true),
+      meal("麻辣烫冒菜", "麻辣香锅单人", "🍲", 32, ["spicy", "comfort"], ["spicy"], ["happy", "protein"], 5, 5, 4),
+      meal("麻辣烫冒菜", "酸菜鱼单人份", "🐟", 30, ["spicy", "hot", "protein"], ["spicy", "seafood"], ["protein", "happy"], 5, 3, 3),
+      meal("麻辣烫冒菜", "香辣烤鱼饭", "🐟", 30, ["spicy", "hot", "comfort"], ["spicy", "seafood"], ["protein", "happy"], 5, 4, 4),
+      meal("麻辣烫冒菜", "串串杯", "🍢", 16, ["spicy", "rush"], ["spicy"], ["happy"], 3, 3, 4),
+      meal("麻辣烫冒菜", "泡菜豆腐锅", "🍲", 24, ["spicy", "hot"], ["spicy"], ["balanced", "light"], 3, 2, 3, true),
+      meal("麻辣烫冒菜", "水煮肉片饭", "🍛", 26, ["spicy", "hot", "protein"], ["spicy"], ["protein", "happy"], 5, 4, 4),
+      // === 轻食健康（真实参考：连锁轻食品牌人均 25-38 元，便利店轻食 15-22 元）===
+      meal("轻食健康", "鸡胸轻食碗", "🥗", 28, ["fresh", "protein"], [], ["light", "protein", "balanced"], 3, 1, 0),
+      meal("轻食健康", "烤鸡轻食盒", "🍗", 30, ["fresh", "protein"], [], ["light", "protein", "balanced"], 4, 2, 0),
+      meal("轻食健康", "虾仁沙拉碗", "🥗", 32, ["fresh", "protein"], ["seafood"], ["light", "protein"], 3, 1, 0),
+      meal("轻食健康", "牛油果鸡蛋三明治", "🥪", 22, ["fresh", "rush"], [], ["light", "balanced"], 2, 1, 0, true),
+      meal("轻食健康", "豆腐蔬菜锅", "🍲", 20, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
+      meal("轻食健康", "素食拌饭", "🥬", 18, ["fresh"], [], ["light", "balanced"], 3, 1, 0, true),
+      meal("轻食健康", "鹰嘴豆能量碗", "🥗", 28, ["fresh"], [], ["light", "balanced"], 3, 1, 0, true),
+      meal("轻食健康", "金枪鱼三明治", "🥪", 22, ["fresh", "protein", "rush"], ["seafood"], ["light", "protein"], 3, 1, 0),
+      meal("轻食健康", "藜麦鸡肉碗", "🥗", 32, ["fresh", "protein"], [], ["light", "protein", "balanced"], 4, 1, 0),
+      meal("轻食健康", "水煮蛋蔬菜杯", "🥚", 15, ["fresh", "rush"], [], ["light", "balanced"], 2, 1, 0, true),
+      meal("轻食健康", "咖啡店鸡肉卷", "🌯", 25, ["fresh", "protein"], [], ["balanced", "protein"], 3, 2, 0),
+      meal("轻食健康", "希腊酸奶水果杯", "🥣", 18, ["fresh", "rush"], [], ["light"], 2, 1, 0, true),
+      // === 便利店小吃（真实参考：饭团 6-10 元、煎饼果子 8-12 元、包子豆浆 8-12 元）===
+      meal("便利店小吃", "饭团酸奶组合", "🍙", 14, ["fresh", "rush"], [], ["light", "balanced"], 2, 1, 0),
+      meal("便利店小吃", "饭团茶叶蛋豆浆", "🍙", 14, ["fresh", "rush", "protein"], [], ["balanced", "protein"], 3, 1, 0, true),
+      meal("便利店小吃", "烤冷面加蛋", "🥚", 8, ["comfort", "rush"], [], ["happy"], 3, 3, 1, true),
+      meal("便利店小吃", "手作火腿三明治", "🥪", 15, ["fresh", "rush"], [], ["balanced"], 2, 2, 0),
+      meal("便利店小吃", "肉夹馍凉皮组合", "🥙", 16, ["fresh", "rush", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
+      meal("便利店小吃", "煎饼果子", "🌯", 8, ["comfort", "rush"], [], ["happy"], 3, 3, 0, true),
+      meal("便利店小吃", "鸡蛋灌饼", "🥚", 8, ["comfort", "rush"], [], ["happy"], 3, 3, 0, true),
+      meal("便利店小吃", "包子豆浆组合", "🥟", 10, ["hot", "rush"], [], ["balanced"], 3, 2, 0),
+      meal("便利店小吃", "寿司饭团组合", "🍣", 18, ["fresh", "rush"], ["seafood"], ["light", "balanced"], 3, 1, 0),
+      meal("便利店小吃", "盒装番茄意面", "🍝", 16, ["comfort", "rush"], [], ["balanced"], 3, 2, 0, true),
+      // === 西式简餐（真实参考：华莱士人均 15-20 元、麦当劳人均 25-35 元、塔斯汀人均 18-25 元）===
+      meal("西式简餐", "鸡腿汉堡套餐", "🍔", 22, ["comfort", "rush", "protein"], [], ["happy", "protein"], 4, 4, 0),
+      meal("西式简餐", "牛肉汉堡", "🍔", 28, ["comfort", "rush", "protein"], ["beef"], ["happy", "protein"], 4, 4, 0),
+      meal("西式简餐", "墨西哥鸡肉卷", "🌯", 22, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 1),
+      meal("西式简餐", "番茄鸡肉意面", "🍝", 25, ["comfort", "protein"], [], ["balanced", "protein"], 4, 2, 0),
+      meal("西式简餐", "奶油蘑菇意面", "🍝", 26, ["comfort"], [], ["happy"], 4, 4, 0, true),
+      meal("西式简餐", "玛格丽特披萨", "🍕", 28, ["comfort"], [], ["happy"], 4, 3, 0, true),
+      meal("西式简餐", "烤肉披萨", "🍕", 32, ["comfort", "protein"], [], ["happy", "protein"], 5, 4, 0),
+      meal("西式简餐", "炸鸡沙拉杯", "🍗", 22, ["fresh", "comfort"], [], ["happy"], 3, 4, 0),
+      meal("西式简餐", "热狗套餐", "🌭", 18, ["comfort", "rush"], [], ["happy"], 3, 4, 0),
+      meal("西式简餐", "凯撒鸡肉卷", "🌯", 22, ["fresh", "protein"], [], ["balanced", "protein"], 3, 2, 0),
+      // === 日韩东南亚（真实参考：米村拌饭 30 元、朴大叔拌饭 27 元、石锅拌饭 25-30 元）===
+      meal("日韩东南亚", "寿司便当", "🍣", 32, ["fresh"], ["seafood"], ["light", "balanced"], 3, 1, 0),
+      meal("日韩东南亚", "日料饭团便当", "🍣", 26, ["fresh", "comfort"], ["seafood"], ["balanced", "light"], 3, 1, 0),
+      meal("日韩东南亚", "石锅拌饭", "🍚", 26, ["hot", "comfort"], [], ["balanced", "happy"], 4, 3, 1),
+      meal("日韩东南亚", "海南鸡饭", "🍗", 24, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 0),
+      meal("日韩东南亚", "泰式打抛鸡饭", "🍛", 26, ["spicy", "comfort", "protein"], ["spicy"], ["protein", "happy"], 4, 3, 3),
+      meal("日韩东南亚", "泰式绿咖喱鸡饭", "🍛", 28, ["spicy", "comfort", "protein"], ["spicy"], ["protein", "happy"], 4, 3, 2),
+      meal("日韩东南亚", "日式咖喱猪排饭", "🍛", 30, ["comfort", "protein"], [], ["happy", "protein"], 5, 4, 0),
+      meal("日韩东南亚", "韩式拌饭", "🍚", 26, ["fresh", "spicy"], ["spicy"], ["balanced"], 4, 2, 2),
+      meal("日韩东南亚", "部队锅小份", "🍲", 35, ["spicy", "hot", "comfort"], ["spicy"], ["happy"], 5, 4, 3),
+      meal("日韩东南亚", "越南春卷米粉", "🥗", 22, ["fresh"], [], ["light", "balanced"], 3, 1, 0),
+      // === 地方菜小碗菜（真实参考：猪脚饭 19 元、乡村基 21 元、小碗菜拼饭 20-25 元、港式茶餐厅 30-38 元）===
+      meal("地方菜小碗菜", "港式茶餐厅双拼饭", "🍛", 32, ["comfort", "hot", "protein"], [], ["happy"], 5, 4, 0),
+      meal("地方菜小碗菜", "猪脚饭小份", "🍖", 19, ["comfort", "hot"], [], ["happy"], 5, 5, 0),
+      meal("地方菜小碗菜", "小碗菜拼饭", "🍱", 22, ["hot", "comfort"], [], ["balanced"], 4, 3, 1),
+      meal("地方菜小碗菜", "木桶饭", "🍚", 18, ["hot", "comfort"], [], ["balanced"], 4, 3, 0),
+      meal("地方菜小碗菜", "新疆拌面", "🍜", 24, ["comfort", "hot"], ["beef"], ["happy", "protein"], 5, 3, 1),
+      meal("地方菜小碗菜", "椰子鸡饭", "🍗", 30, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 0),
+      meal("地方菜小碗菜", "砂锅豆腐饭", "🍲", 18, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
+      meal("地方菜小碗菜", "东北饺子拼盘", "🥟", 22, ["hot", "comfort"], [], ["balanced"], 4, 3, 0)
     ];
 
     const state = {
@@ -2044,8 +2123,8 @@
         else if (price <= 35) score += 4;
       }
       if (state.budget === "high") {
-        if (price > 30 && price <= 45) score += 12;
-        else if (price <= 24) score -= 4;
+        if (price > 30 && price <= 40) score += 12;
+        else if (price <= 25) score -= 4;
       }
       if (state.budget === "flex" && price >= 30) score += 8;
       if (state.health === "happy" && meal.tags.includes("comfort")) score += 14;
@@ -2232,6 +2311,10 @@
           <span>油腻 ${escapeHTML(meal.oil)}/5</span>
           <span>辣度 ${escapeHTML(meal.spicy)}/5</span>
         </div>
+        <div class="order-links">
+          <a class="link-meituan" href="https://www.meituan.com/s/${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">🛵 去美团搜</a>
+          <a class="link-eleme" href="https://www.ele.me/search?keyword=${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">🏍️ 去饿了么搜</a>
+        </div>
       `;
 
       feedbackActions.dataset.currentMeal = meal.name;
@@ -2297,6 +2380,15 @@
         state.offset = 0;
         render();
       });
+    });
+
+    document.getElementById("quickPickButton").addEventListener("click", () => {
+      state.budget = "flex";
+      state.taste = "comfort";
+      state.health = "happy";
+      state.avoid.clear();
+      state.offset = Math.floor(Math.random() * rankedMeals().length);
+      render();
     });
 
     document.getElementById("shuffleButton").addEventListener("click", () => {
