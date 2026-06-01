@@ -756,7 +756,7 @@
       border-top: 1px dashed var(--line);
     }
 
-    .order-links a {
+    .order-links button {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -765,24 +765,26 @@
       padding: 0 14px;
       font-size: 13px;
       font-weight: 780;
+      font-family: inherit;
+      cursor: pointer;
       transition: transform 180ms var(--ease), box-shadow 180ms var(--ease);
     }
 
-    .order-links a:hover {
+    .order-links button:hover {
       transform: translateY(-1px);
       box-shadow: var(--micro-shadow);
     }
 
-    .order-links .link-meituan {
+    .order-links .copy-meal {
       background: #fff3e0;
       color: #e68a00;
       border: 1px solid rgba(230, 138, 0, .2);
     }
 
-    .order-links .link-eleme {
-      background: #e3f2fd;
-      color: #1976d2;
-      border: 1px solid rgba(25, 118, 210, .2);
+    .order-links .copy-meal.copied {
+      background: #e8f7ee;
+      color: #25774c;
+      border-color: rgba(37, 119, 76, .24);
     }
 
     .no-repeat-toggle {
@@ -2312,8 +2314,7 @@
           <span>辣度 ${escapeHTML(meal.spicy)}/5</span>
         </div>
         <div class="order-links">
-          <a class="link-meituan" href="https://www.meituan.com/s/${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">🛵 去美团搜</a>
-          <a class="link-eleme" href="https://www.ele.me/search?keyword=${encodeURIComponent(meal.name)}" target="_blank" rel="noopener">🏍️ 去饿了么搜</a>
+          <button class="copy-meal" type="button" data-copy-meal="${escapeHTML(meal.name)}">复制菜名</button>
         </div>
       `;
 
@@ -2389,6 +2390,40 @@
       state.avoid.clear();
       state.offset = Math.floor(Math.random() * rankedMeals().length);
       render();
+    });
+
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+        const input = document.createElement("textarea");
+        input.value = text;
+        input.setAttribute("readonly", "");
+        input.style.position = "fixed";
+        input.style.top = "-999px";
+        document.body.appendChild(input);
+        input.select();
+        const copied = document.execCommand("copy");
+        input.remove();
+        return copied;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    mainMeal.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy-meal]");
+      if (!button) return;
+      const originalText = button.textContent;
+      const copied = await copyText(button.dataset.copyMeal);
+      button.textContent = copied ? "已复制" : "复制失败";
+      button.classList.toggle("copied", copied);
+      window.setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove("copied");
+      }, 1400);
     });
 
     document.getElementById("shuffleButton").addEventListener("click", () => {
