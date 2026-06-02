@@ -588,6 +588,10 @@
       gap: 9px;
     }
 
+    .budget-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .option {
       min-height: 44px;
       border: 1px solid var(--line);
@@ -1581,7 +1585,7 @@
             <p>忌口和预算会优先处理，避免推荐出你一眼就会排除的餐食。</p>
             <ul>
               <li>不吃辣时，不推荐辣味选项。</li>
-              <li>预算 20 元内时，优先低价可执行选择。</li>
+              <li>预算 30 元内时，优先低价可执行选择。</li>
               <li>素食优先时，避开明显含肉餐食。</li>
             </ul>
           </article>
@@ -1645,12 +1649,26 @@
 
               <button class="quick-pick" type="button" id="quickPickButton">不想选了，随便推荐一个</button>
 
+              <div class="form-group" data-group="scene">
+                <div class="group-label">场景 <span>先定范围</span></div>
+                <div class="option-grid">
+                  <button class="option active" type="button" data-value="daily">日常快吃</button>
+                  <button class="option" type="button" data-value="treat">改善一下</button>
+                  <button class="option" type="button" data-value="group">聚餐约饭</button>
+                  <button class="option" type="button" data-value="date">约会庆祝</button>
+                  <button class="option" type="button" data-value="any">随便都行</button>
+                </div>
+              </div>
+
               <div class="form-group" data-group="budget">
                 <div class="group-label">预算 <span>硬约束</span></div>
-                <div class="option-grid">
-                  <button class="option" type="button" data-value="low">20 元内</button>
-                  <button class="option active" type="button" data-value="mid">30 元内</button>
-                  <button class="option" type="button" data-value="high">40 元内</button>
+                <div class="option-grid budget-grid">
+                  <button class="option active" type="button" data-value="low">30 元内</button>
+                  <button class="option" type="button" data-value="mid">60 元内</button>
+                  <button class="option" type="button" data-value="high">100 元内</button>
+                  <button class="option" type="button" data-value="premium">200 元内</button>
+                  <button class="option" type="button" data-value="splurge">400 元内</button>
+                  <button class="option" type="button" data-value="luxury">800 元内</button>
                   <button class="option" type="button" data-value="flex">今天放开</button>
                 </div>
               </div>
@@ -1841,7 +1859,7 @@
   </div>
 
   <script>
-    const budgetLimit = { low: 20, mid: 30, high: 40, flex: 999 };
+    const budgetLimit = { low: 30, mid: 60, high: 100, premium: 200, splurge: 400, luxury: 800, flex: 9999 };
     const storageKey = "mealBlindboxPreferenceV2";
     const storage = (() => {
       try {
@@ -1851,7 +1869,8 @@
       }
     })();
     const labels = {
-      budget: { low: "20 元内", mid: "30 元内", high: "40 元内", flex: "今天放开" },
+      scene: { daily: "日常快吃", treat: "改善一下", group: "聚餐约饭", date: "约会庆祝", any: "随便都行" },
+      budget: { low: "30 元内", mid: "60 元内", high: "100 元内", premium: "200 元内", splurge: "400 元内", luxury: "800 元内", flex: "今天放开" },
       region: { metro: "一线核心区", capital: "新一线/省会", standard: "普通城市", campus: "校园低价区" },
       taste: { hot: "热乎", spicy: "想吃辣", fresh: "清淡", comfort: "不限" },
       health: { balanced: "均衡一点", light: "少油轻负担", protein: "补蛋白", happy: "开心最重要" },
@@ -1866,7 +1885,18 @@
         takeaway: "可外带",
         desk: "工位友好",
         fresh: "清淡",
-        rush: "出餐快"
+        rush: "出餐快",
+        grilled: "现烤",
+        buffet: "自助",
+        seafood: "海鲜",
+        western: "西餐",
+        ritual: "仪式感",
+        date: "适合约会",
+        group: "适合聚餐",
+        premium: "改善餐",
+        share: "适合分享",
+        private: "私房菜",
+        brunch: "Brunch"
       }
     };
     const regionPrice = {
@@ -1884,11 +1914,17 @@
       "便利店小吃": 0.84,
       "西式简餐": 0.95,
       "日韩东南亚": 0.96,
-      "地方菜小碗菜": 0.9
+      "地方菜小碗菜": 0.9,
+      "火锅烤肉": 1,
+      "自助海鲜": 1.02,
+      "日料寿司": 1.05,
+      "西餐牛排": 1.04,
+      "城市餐厅": 1,
+      "特色餐厅": 1.03
     };
 
     function priceRange(price) {
-      const spread = price <= 20 ? 4 : price <= 35 ? 6 : 8;
+      const spread = price <= 20 ? 4 : price <= 35 ? 6 : price <= 100 ? 16 : price <= 200 ? 30 : price <= 400 ? 60 : 100;
       const min = Math.max(8, price - Math.ceil(spread / 2));
       const max = price + Math.floor(spread / 2);
       return { min, max, label: `${min}-${max} 元` };
@@ -1904,10 +1940,10 @@
       return priceRange(localPrice(meal));
     }
 
-    function meal(category, name, emoji, price, tags, avoid, health, satiety, oil, spicy, vegetarian = false) {
+    function meal(category, name, emoji, price, tags, avoid, health, satiety, oil, spicy, vegetarian = false, scenes = ["daily"]) {
       const tasteText = tags.includes("spicy") ? "口味更直接" : tags.includes("fresh") ? "整体更清淡" : tags.includes("comfort") ? "满足感更强" : "口味比较稳";
       const healthText = health.includes("light") ? "负担相对轻" : health.includes("protein") ? "蛋白质更足" : health.includes("happy") ? "更适合想吃开心一点" : "搭配相对均衡";
-      const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 32 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
+      const caution = spicy >= 3 ? "不吃辣或下午要见人时不优先。" : oil >= 4 ? "油脂偏高，少油偏好强时不优先。" : satiety <= 2 ? "饱腹感偏弱，特别饿时建议加配菜。" : price > 220 ? "更适合庆祝、约会或聚餐，日常随便吃会偏重。" : price > 60 ? "预算较紧时可以换更低价的备选。" : "如果今天想吃重口或更有仪式感，可能不是最优先。";
       return {
         category,
         name,
@@ -1920,6 +1956,7 @@
         satiety,
         oil,
         spicy,
+        scenes,
         reason: `${category}里的常见选择，${tasteText}，${healthText}。`,
         fit: `适合当前预算、口味和健康偏好组合。`,
         caution,
@@ -2036,11 +2073,70 @@
       meal("地方菜小碗菜", "新疆拌面", "🍜", 24, ["comfort", "hot"], ["beef"], ["happy", "protein"], 5, 3, 1),
       meal("地方菜小碗菜", "椰子鸡饭", "🍗", 30, ["fresh", "protein"], [], ["balanced", "protein"], 4, 2, 0),
       meal("地方菜小碗菜", "砂锅豆腐饭", "🍲", 18, ["hot", "fresh"], [], ["light", "balanced"], 3, 1, 0, true),
-      meal("地方菜小碗菜", "东北饺子拼盘", "🥟", 22, ["hot", "comfort"], [], ["balanced"], 4, 3, 0)
+      meal("地方菜小碗菜", "东北饺子拼盘", "🥟", 22, ["hot", "comfort"], [], ["balanced"], 4, 3, 0),
+      // === 火锅烤肉（真实参考：连锁火锅/烤肉人均 80-200 元，精品烤肉 200-400 元）===
+      meal("火锅烤肉", "牛油火锅双人餐", "🍲", 120, ["spicy", "hot", "group", "share"], ["spicy"], ["happy", "protein"], 5, 5, 4, false, ["treat", "group"]),
+      meal("火锅烤肉", "番茄火锅双人餐", "🍲", 110, ["hot", "group", "share"], [], ["balanced", "happy"], 5, 3, 0, false, ["treat", "group"]),
+      meal("火锅烤肉", "椰子鸡火锅", "🥥", 160, ["fresh", "hot", "group"], [], ["balanced", "protein"], 4, 2, 0, false, ["treat", "group", "date"]),
+      meal("火锅烤肉", "韩式烤肉拼盘", "🥩", 138, ["grilled", "comfort", "group"], ["beef"], ["happy", "protein"], 5, 4, 0, false, ["treat", "group"]),
+      meal("火锅烤肉", "日式烧肉套餐", "🥩", 238, ["grilled", "premium", "date"], ["beef"], ["happy", "protein"], 5, 4, 0, false, ["date", "group"]),
+      meal("火锅烤肉", "和牛烧肉体验餐", "🥩", 398, ["grilled", "premium", "ritual"], ["beef"], ["happy", "protein"], 5, 4, 0, false, ["date", "group"]),
+      meal("火锅烤肉", "烤鱼聚餐套餐", "🐟", 168, ["spicy", "hot", "group", "share"], ["spicy", "seafood"], ["happy", "protein"], 5, 4, 4, false, ["treat", "group"]),
+      meal("火锅烤肉", "羊蝎子火锅", "🍲", 150, ["hot", "comfort", "group"], [], ["happy", "protein"], 5, 4, 1, false, ["treat", "group"]),
+      meal("火锅烤肉", "潮汕牛肉火锅", "🥩", 180, ["fresh", "hot", "group"], ["beef"], ["balanced", "protein"], 4, 2, 0, false, ["treat", "group"]),
+      meal("火锅烤肉", "炭火烤羊排", "🍖", 220, ["grilled", "comfort", "premium"], [], ["happy", "protein"], 5, 4, 0, false, ["group", "date"]),
+      // === 自助海鲜（真实参考：城市自助人均 100-300 元，高端酒店自助 400-800 元）===
+      meal("自助海鲜", "烤肉自助", "🍖", 99, ["buffet", "group", "comfort"], [], ["happy", "protein"], 5, 4, 1, false, ["treat", "group"]),
+      meal("自助海鲜", "火锅自助", "🍲", 128, ["buffet", "hot", "group"], [], ["happy"], 5, 4, 2, false, ["treat", "group"]),
+      meal("自助海鲜", "海鲜自助", "🦞", 238, ["buffet", "seafood", "premium"], ["seafood"], ["happy", "protein"], 5, 3, 0, false, ["group", "date"]),
+      meal("自助海鲜", "日料放题", "🍣", 198, ["buffet", "fresh", "seafood"], ["seafood"], ["happy", "protein"], 4, 2, 0, false, ["treat", "group", "date"]),
+      meal("自助海鲜", "酒店下午茶自助", "🍰", 288, ["buffet", "ritual", "date"], [], ["happy"], 3, 3, 0, true, ["date"]),
+      meal("自助海鲜", "高端酒店海鲜自助", "🦀", 588, ["buffet", "seafood", "ritual"], ["seafood"], ["happy", "protein"], 5, 3, 0, false, ["date", "group"]),
+      meal("自助海鲜", "牛排海鲜自助", "🥩", 398, ["buffet", "western", "seafood"], ["beef", "seafood"], ["happy", "protein"], 5, 4, 0, false, ["date", "group"]),
+      meal("自助海鲜", "周末 Brunch 自助", "🥐", 188, ["brunch", "buffet", "ritual"], [], ["balanced", "happy"], 4, 3, 0, true, ["date", "treat"]),
+      // === 日料寿司（真实参考：寿司店人均 80-200 元，Omakase 400-800 元）===
+      meal("日料寿司", "寿司拼盘套餐", "🍣", 88, ["fresh", "seafood", "date"], ["seafood"], ["light", "balanced"], 3, 1, 0, false, ["treat", "date"]),
+      meal("日料寿司", "鳗鱼饭定食", "🍱", 98, ["comfort", "premium"], ["seafood"], ["happy", "protein"], 4, 3, 0, false, ["treat", "date"]),
+      meal("日料寿司", "刺身拼盘", "🍣", 168, ["fresh", "seafood", "premium"], ["seafood"], ["light", "protein"], 3, 1, 0, false, ["date", "group"]),
+      meal("日料寿司", "寿喜烧套餐", "🥘", 188, ["hot", "premium", "date"], ["beef"], ["happy", "protein"], 4, 3, 0, false, ["date", "treat"]),
+      meal("日料寿司", "天妇罗定食", "🍤", 128, ["comfort", "seafood"], ["seafood"], ["happy"], 4, 4, 0, false, ["treat", "date"]),
+      meal("日料寿司", "Omakase 入门", "🍣", 398, ["fresh", "ritual", "premium"], ["seafood"], ["happy", "protein"], 4, 2, 0, false, ["date"]),
+      meal("日料寿司", "高端 Omakase", "🍣", 760, ["fresh", "ritual", "premium"], ["seafood"], ["happy", "protein"], 4, 2, 0, false, ["date"]),
+      meal("日料寿司", "炉端烧小聚", "🍢", 228, ["grilled", "group", "premium"], [], ["happy", "protein"], 4, 3, 0, false, ["group", "date"]),
+      // === 西餐牛排（真实参考：Brunch 80-180 元，牛排/西餐人均 150-600 元）===
+      meal("西餐牛排", "美式 Brunch", "🥞", 88, ["brunch", "ritual", "fresh"], [], ["balanced", "happy"], 3, 3, 0, true, ["treat", "date"]),
+      meal("西餐牛排", "意式披萨双人餐", "🍕", 158, ["western", "share", "date"], [], ["happy"], 5, 4, 0, true, ["treat", "date", "group"]),
+      meal("西餐牛排", "经典牛排套餐", "🥩", 198, ["western", "premium", "date"], ["beef"], ["happy", "protein"], 5, 4, 0, false, ["date", "treat"]),
+      meal("西餐牛排", "战斧牛排分享餐", "🥩", 420, ["western", "share", "premium"], ["beef"], ["happy", "protein"], 5, 4, 0, false, ["date", "group"]),
+      meal("西餐牛排", "法式小酒馆", "🍷", 268, ["western", "ritual", "date"], [], ["happy"], 4, 3, 0, false, ["date"]),
+      meal("西餐牛排", "西餐厅生日套餐", "🎂", 368, ["western", "ritual", "date"], [], ["happy"], 4, 3, 0, false, ["date"]),
+      meal("西餐牛排", "高端牛排馆", "🥩", 688, ["western", "premium", "ritual"], ["beef"], ["happy", "protein"], 5, 4, 0, false, ["date"]),
+      meal("西餐牛排", "Bistro 小聚餐", "🍽️", 188, ["western", "group", "ritual"], [], ["happy"], 4, 3, 0, false, ["group", "date"]),
+      // === 城市餐厅（真实参考：湘菜/粤菜/融合菜人均 80-300 元）===
+      meal("城市餐厅", "粤菜点心聚餐", "🥢", 138, ["fresh", "group", "share"], ["seafood"], ["balanced", "happy"], 4, 3, 0, false, ["treat", "group", "date"]),
+      meal("城市餐厅", "湘菜小炒聚餐", "🌶️", 118, ["spicy", "group", "comfort"], ["spicy"], ["happy"], 5, 4, 4, false, ["treat", "group"]),
+      meal("城市餐厅", "江浙菜家庭餐厅", "🥢", 158, ["fresh", "group", "share"], [], ["balanced", "happy"], 4, 3, 0, false, ["group", "date"]),
+      meal("城市餐厅", "云南菜小馆", "🍄", 108, ["fresh", "group"], [], ["balanced", "happy"], 4, 2, 1, false, ["treat", "group"]),
+      meal("城市餐厅", "泰餐双人餐", "🍛", 168, ["spicy", "fresh", "date"], ["spicy", "seafood"], ["happy"], 4, 3, 3, false, ["treat", "date", "group"]),
+      meal("城市餐厅", "韩餐部队锅烤肉", "🥘", 148, ["spicy", "group", "grilled"], ["spicy", "beef"], ["happy", "protein"], 5, 4, 3, false, ["treat", "group"]),
+      meal("城市餐厅", "创意融合菜", "🍽️", 268, ["premium", "ritual", "date"], [], ["happy"], 4, 3, 1, false, ["date", "group"]),
+      meal("城市餐厅", "景观餐厅晚餐", "🌃", 498, ["premium", "ritual", "date"], [], ["happy"], 4, 3, 0, false, ["date"]),
+      meal("城市餐厅", "私房菜包间", "🥢", 388, ["private", "group", "premium"], [], ["happy"], 5, 3, 1, false, ["group", "date"]),
+      meal("城市餐厅", "精致粤菜海鲜餐", "🦐", 520, ["seafood", "premium", "ritual"], ["seafood"], ["happy", "protein"], 5, 3, 0, false, ["date", "group"]),
+      // === 特色餐厅（真实参考：主题餐厅/酒馆/创意菜人均 100-500 元）===
+      meal("特色餐厅", "精酿酒馆小食", "🍺", 128, ["group", "share", "comfort"], [], ["happy"], 4, 4, 0, false, ["group", "treat"]),
+      meal("特色餐厅", "烧鸟居酒屋", "🍢", 238, ["grilled", "date", "premium"], [], ["happy", "protein"], 4, 3, 0, false, ["date", "group"]),
+      meal("特色餐厅", "东南亚露台餐厅", "🌿", 198, ["fresh", "ritual", "date"], ["seafood"], ["balanced", "happy"], 4, 2, 2, false, ["date", "group"]),
+      meal("特色餐厅", "生日蛋糕甜品餐", "🍰", 168, ["ritual", "date"], [], ["happy"], 3, 3, 0, true, ["date"]),
+      meal("特色餐厅", "素食创意料理", "🥬", 198, ["fresh", "ritual", "premium"], [], ["light", "balanced"], 3, 2, 0, true, ["date", "treat"]),
+      meal("特色餐厅", "黑珍珠入门餐厅", "🍽️", 598, ["premium", "ritual", "date"], [], ["happy"], 4, 3, 0, false, ["date"]),
+      meal("特色餐厅", "海景餐厅双人餐", "🌊", 688, ["premium", "ritual", "seafood"], ["seafood"], ["happy", "protein"], 4, 3, 0, false, ["date"]),
+      meal("特色餐厅", "主厨菜单体验", "👨‍🍳", 780, ["private", "premium", "ritual"], [], ["happy"], 4, 3, 0, false, ["date"])
     ];
 
     const state = {
-      budget: "mid",
+      scene: "daily",
+      budget: "low",
       region: "standard",
       taste: "hot",
       health: "balanced",
@@ -2095,12 +2191,14 @@
 
     function conflicts(meal) {
       if (localPriceRange(meal).min > budgetLimit[state.budget]) return true;
+      if (state.scene !== "any" && !meal.scenes.includes(state.scene)) return true;
       if (state.avoid.has("meat") && !meal.vegetarian) return true;
       return [...state.avoid].some((item) => meal.avoid.includes(item));
     }
 
     function conflictReason(meal) {
       if (localPriceRange(meal).min > budgetLimit[state.budget]) return `本地参考价 ${localPriceRange(meal).label}，超过当前预算`;
+      if (state.scene !== "any" && !meal.scenes.includes(state.scene)) return `不属于「${labels.scene[state.scene]}」场景`;
       if (state.avoid.has("meat") && !meal.vegetarian) return "你选择了素食优先";
       if (state.avoid.has("spicy") && meal.avoid.includes("spicy")) return "你选择了不吃辣";
       if (state.avoid.has("beef") && meal.avoid.includes("beef")) return "你选择了不吃牛肉";
@@ -2111,24 +2209,26 @@
     function scoreMeal(meal) {
       let score = 46;
       const price = localPrice(meal);
+      const limit = budgetLimit[state.budget];
+      if (state.scene !== "any" && meal.scenes.includes(state.scene)) score += 22;
       if (state.taste !== "comfort" && meal.tags.includes(state.taste)) score += 20;
       if (meal.health.includes(state.health)) score += 16;
       if (state.health === "light" && meal.oil <= 2) score += 10;
       if (state.health === "protein" && meal.health.includes("protein")) score += 10;
-      if (state.budget === "low") {
-        if (price <= 20) score += 14;
-        if (price > 28) score -= 10;
+      if (["date", "group", "treat"].includes(state.scene) && meal.tags.includes("premium")) score += 12;
+      if (state.scene === "date" && meal.tags.includes("ritual")) score += 16;
+      if (state.scene === "group" && (meal.tags.includes("share") || meal.tags.includes("group"))) score += 12;
+      if (state.budget !== "flex") {
+        const lowerBand = limit * 0.45;
+        const idealLow = limit * 0.55;
+        if (price >= idealLow && price <= limit) score += 16;
+        else if (price >= lowerBand && price <= limit) score += 10;
+        else if (price < lowerBand) score += state.scene === "daily" ? 5 : -2;
+        if (["premium", "splurge", "luxury"].includes(state.budget) && price >= 120) score += 8;
+        if (["splurge", "luxury"].includes(state.budget) && price >= 260) score += 10;
+        if (state.budget === "luxury" && price >= 480) score += 10;
       }
-      if (state.budget === "mid") {
-        if (price > 20 && price <= 30) score += 12;
-        else if (price <= 20) score += 3;
-        else if (price <= 35) score += 4;
-      }
-      if (state.budget === "high") {
-        if (price > 30 && price <= 40) score += 12;
-        else if (price <= 25) score -= 4;
-      }
-      if (state.budget === "flex" && price >= 30) score += 8;
+      if (state.budget === "flex" && price >= 80) score += 10;
       if (state.health === "happy" && meal.tags.includes("comfort")) score += 14;
       if (state.taste === "spicy" && meal.spicy >= 3) score += 8;
       if (state.taste === "fresh" && meal.oil <= 2) score += 8;
@@ -2139,8 +2239,16 @@
       return Math.min(99, score);
     }
 
+    function shouldPreferHigherPrice() {
+      return state.scene !== "daily" && ["premium", "splurge", "luxury", "flex"].includes(state.budget);
+    }
+
+    function priceTieBreak(a, b) {
+      return shouldPreferHigherPrice() ? localPrice(b) - localPrice(a) : localPrice(a) - localPrice(b);
+    }
+
     function diversifyMeals(list) {
-      const sorted = [...list].sort((a, b) => b.score - a.score || localPrice(a) - localPrice(b));
+      const sorted = [...list].sort((a, b) => b.score - a.score || priceTieBreak(a, b));
       const picked = [];
       const remaining = [...sorted];
       while (remaining.length) {
@@ -2155,7 +2263,7 @@
       const list = meals
         .filter((meal) => !conflicts(meal))
         .map((meal) => ({ ...meal, score: scoreMeal(meal) }))
-        .sort((a, b) => b.score - a.score || localPrice(a) - localPrice(b));
+        .sort((a, b) => b.score - a.score || priceTieBreak(a, b));
       return diversifyMeals(list.filter((meal) => meal.score > 0));
     }
 
@@ -2194,7 +2302,7 @@
     function reasonCards(meal) {
       return [
         { title: "为什么是它", text: meal.reason },
-        { title: "适合今天", text: `${labels.region[state.region]}、${labels.budget[state.budget]}、${labels.taste[state.taste]}、${labels.health[state.health]}，比较贴近你现在的选择。` },
+        { title: "适合今天", text: `${labels.scene[state.scene]}、${labels.region[state.region]}、${labels.budget[state.budget]}、${labels.taste[state.taste]}、${labels.health[state.health]}，比较贴近你现在的选择。` },
         { title: "价格说明", text: `本地参考价 ${localPriceRange(meal).label}，未接入实时门店和外卖平台价格。` },
         { title: "口感预期", text: `饱腹感 ${meal.satiety}/5，油腻度 ${meal.oil}/5，辣度 ${meal.spicy}/5。` },
         { title: "不适合情况", text: meal.caution }
@@ -2221,6 +2329,7 @@
         ? Array.from(state.avoid).map((item) => labels.avoid[item]).join("、")
         : "无忌口";
       summary.innerHTML = [
+        labels.scene[state.scene],
         `预算 ${labels.budget[state.budget]}`,
         labels.region[state.region],
         labels.taste[state.taste],
@@ -2384,6 +2493,7 @@
     });
 
     document.getElementById("quickPickButton").addEventListener("click", () => {
+      state.scene = "any";
       state.budget = "flex";
       state.taste = "comfort";
       state.health = "happy";
